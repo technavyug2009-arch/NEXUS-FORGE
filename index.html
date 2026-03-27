@@ -318,7 +318,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
 <body>
 
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar collapsed" id="sidebar">
     <div class="logo-container">
         <div class="logo">
             <span class="logo-icon">NF</span>
@@ -364,7 +364,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     </div>
 </aside>
 
-<div class="topbar">
+<div class="topbar collapsed">
     <div style="display: flex; align-items: center;">
         <button class="sidebar-toggle" id="sidebarToggle">☰</button>
         <input type="text" id="searchInput" class="search-input" placeholder="Search archives...">
@@ -374,7 +374,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     </div>
 </div>
 
-<main>
+<main class="collapsed">
     <section id="home" class="view-section active">
         <div class="hero">
             <h1>Welcome to the Forge</h1>
@@ -682,8 +682,13 @@ const DOM = {
     main: document.querySelector('main')
 };
 
-// Sidebar Toggle
-DOM.sidebarToggle.addEventListener('click', () => {
+/* =========================
+   ROUTING & AUTO-MINIMIZE LOGIC
+========================= */
+
+// 1. Manual Sidebar Toggle
+DOM.sidebarToggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent immediate closing
     if (window.innerWidth <= 768) {
         DOM.sidebar.classList.toggle('open');
     } else {
@@ -693,13 +698,36 @@ DOM.sidebarToggle.addEventListener('click', () => {
     }
 });
 
-// Routing
+// 2. Auto-Minimize when clicking outside the sidebar
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!DOM.sidebar.contains(e.target) && e.target !== DOM.sidebarToggle) {
+            DOM.sidebar.classList.remove('open');
+        }
+    } else {
+        if (!DOM.sidebar.contains(e.target) && e.target !== DOM.sidebarToggle && !DOM.sidebar.classList.contains('collapsed')) {
+            DOM.sidebar.classList.add('collapsed');
+            DOM.topbar.classList.add('collapsed');
+            DOM.main.classList.add('collapsed');
+        }
+    }
+});
+
+// 3. Auto-Minimize on Navigation Selection
 DOM.navLinks.addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (!li) return;
     
-    if(window.innerWidth <= 768) DOM.sidebar.classList.remove('open');
+    // Auto collapse after clicking a menu item
+    if(window.innerWidth <= 768) {
+        DOM.sidebar.classList.remove('open');
+    } else {
+        DOM.sidebar.classList.add('collapsed');
+        DOM.topbar.classList.add('collapsed');
+        DOM.main.classList.add('collapsed');
+    }
     
+    // Clear search field if navigating away
     if(DOM.searchInput.value !== '') {
         DOM.searchInput.value = '';
         filterStore(); 
