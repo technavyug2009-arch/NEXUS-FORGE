@@ -270,6 +270,41 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 .progress { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
 /* =========================
+   CENTERED PROMO POPUP
+========================= */
+.promo-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5500;
+    padding: 20px;
+}
+.promo-popup.show {
+    display: flex;
+}
+.promo-box {
+    background: #111;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 40px var(--accent-glow);
+    text-align: center;
+    position: relative;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.promo-header { font-size: 1.2rem; margin-bottom: 20px; font-family: 'JetBrains Mono'; }
+.promo-body { font-size: 1.1rem; color: var(--text); margin-bottom: 25px; line-height: 1.6; }
+
+/* =========================
    GAME PLAYER & AI CHAT
 ========================= */
 .game-player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
@@ -307,7 +342,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     .hero h1 { font-size: 2rem; }
     .hero p { font-size: 0.95rem; }
     
-    .modal-box { padding: 25px; }
+    .modal-box, .promo-box { padding: 25px; }
     
     .chat-window { bottom: 90px; right: 5%; width: 90%; }
     .chat-btn { bottom: 20px; right: 20px; width: 55px; height: 55px; }
@@ -316,7 +351,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 </style>
 </head>
 
-<body>
+<body class="sidebar-collapsed">
 
 <aside class="sidebar collapsed" id="sidebar">
     <div class="logo-container">
@@ -574,6 +609,17 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     </section>
 </main>
 
+<div id="promoPopup" class="promo-popup">
+    <div class="promo-box">
+        <div class="promo-header">
+            <span style="color: var(--accent); font-weight: 800; letter-spacing: 1px;">🚀 QUICK TIP</span>
+        </div>
+        <div class="promo-body" id="promoBody"></div>
+        <button class="btn-primary" style="font-size: 1rem; padding: 15px; margin-bottom: 5px;" id="promoActionBtn">UPGRADE NOW</button>
+        <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 10px;" onclick="closePromo()">Maybe Later</button>
+    </div>
+</div>
+
 <div class="modal" id="modal">
     <div class="modal-box">
         <h2 id="mTitle"></h2>
@@ -639,6 +685,10 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 </div>
 
 <script>
+// Global Auth State for Promo Logic
+window.isUserLoggedIn = false;
+window.userCurrentTier = localStorage.getItem('nexusSub') || 'STANDARD TIER';
+
 const apps = [
     { id: 0, title: "GTA VICE CITY", desc: "Open world 80s classic. Optimized for HP 348 G7 integrated graphics.", category: "Games", size: 1400, url: "https://quenq.com/apps/vice-city/", img: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=400", playable: true, genres: ['Open World', 'Racing', 'Role Play', 'PC Playable'], keywords: ['car', 'driving', 'crime', 'action', 'retro'] },
     { id: 1, title: "DEADSHOT.IO", desc: "Fast-paced FPS browser shooter. Zero download required.", category: "Games", size: 85, url: "https://deadshot.io", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['gun', 'multiplayer', 'shooter', 'fps'] },
@@ -685,20 +735,18 @@ const DOM = {
 /* =========================
    ROUTING & AUTO-MINIMIZE LOGIC
 ========================= */
-
-// 1. Manual Sidebar Toggle
 DOM.sidebarToggle.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent immediate closing
+    e.stopPropagation(); 
     if (window.innerWidth <= 768) {
         DOM.sidebar.classList.toggle('open');
     } else {
         DOM.sidebar.classList.toggle('collapsed');
+        document.body.classList.toggle('sidebar-collapsed');
         DOM.topbar.classList.toggle('collapsed');
         DOM.main.classList.toggle('collapsed');
     }
 });
 
-// 2. Auto-Minimize when clicking outside the sidebar
 document.addEventListener('click', (e) => {
     if (window.innerWidth <= 768) {
         if (!DOM.sidebar.contains(e.target) && e.target !== DOM.sidebarToggle) {
@@ -707,27 +755,26 @@ document.addEventListener('click', (e) => {
     } else {
         if (!DOM.sidebar.contains(e.target) && e.target !== DOM.sidebarToggle && !DOM.sidebar.classList.contains('collapsed')) {
             DOM.sidebar.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
             DOM.topbar.classList.add('collapsed');
             DOM.main.classList.add('collapsed');
         }
     }
 });
 
-// 3. Auto-Minimize on Navigation Selection
 DOM.navLinks.addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (!li) return;
     
-    // Auto collapse after clicking a menu item
     if(window.innerWidth <= 768) {
         DOM.sidebar.classList.remove('open');
     } else {
         DOM.sidebar.classList.add('collapsed');
+        document.body.classList.add('sidebar-collapsed');
         DOM.topbar.classList.add('collapsed');
         DOM.main.classList.add('collapsed');
     }
     
-    // Clear search field if navigating away
     if(DOM.searchInput.value !== '') {
         DOM.searchInput.value = '';
         filterStore(); 
@@ -880,14 +927,17 @@ window.saveAlias = function() {
         localStorage.setItem('nexusAlias', input);
         alert(`Alias successfully updated to: ${input}`);
         
-        const stationStatus = document.querySelector('.station-status');
-        stationStatus.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${input.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+        const stationStatuses = document.querySelectorAll('.station-status');
+        stationStatuses.forEach(el => {
+            el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${input.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+        });
     }
 }
 
 window.purchaseTier = function(tierName) {
     alert(`Uplink established. Successfully upgraded to ${tierName}.`);
     
+    window.userCurrentTier = tierName;
     localStorage.setItem('nexusSub', tierName);
     localStorage.setItem('nexusSubDate', Date.now().toString());
     
@@ -901,6 +951,9 @@ window.purchaseTier = function(tierName) {
     document.getElementById('acc-days-progress').style.background = "var(--accent)";
     
     document.querySelector('[data-target=\'account\']').click();
+    
+    // Auto-hide promo if they buy
+    document.getElementById('promoPopup').classList.remove('show');
 }
 
 function addLoginButtonToNav() {
@@ -960,6 +1013,64 @@ function processRuleBasedQuery(cmd) {
     if(cmd === 'hi' || cmd === 'hello' || cmd === 'hey' || cmd === 'greetings') return "Greetings. I am the NEXUS FORGE automated support bot. Ask me about pricing, games, hardware requirements, or type 'help'.";
     return "Command unrecognized. As a secure rule-based construct, I can only respond to queries about the Forge (e.g., 'pricing', 'games', 'hardware', 'support'). Type 'help' for options.";
 }
+
+/* =========================
+   PROMO NUDGE LOGIC (CENTERED & SIMPLIFIED)
+========================= */
+const promoMessages = {
+    login: [
+        "You are not logged in! Create a free account to save your games and progress.",
+        "Don't lose your deployed apps! Log in now to keep everything safe in your Vault."
+    ],
+    upgrade: [
+        "Want better graphics and no lag? Upgrade your plan to play bigger games smoothly!",
+        "Tired of waiting? Get the Premium plan to skip the line and unlock all AAA games."
+    ]
+};
+
+function triggerPromo() {
+    // Abort if user is premium
+    if (window.isUserLoggedIn && window.userCurrentTier !== 'STANDARD TIER') return;
+
+    const popup = document.getElementById('promoPopup');
+    const body = document.getElementById('promoBody');
+    const actionBtn = document.getElementById('promoActionBtn');
+
+    if (!window.isUserLoggedIn) {
+        const msgs = promoMessages.login;
+        body.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+        actionBtn.innerText = "CREATE FREE ACCOUNT";
+        actionBtn.onclick = () => { closePromo(); document.getElementById('authModal').classList.add('active'); };
+    } else {
+        const msgs = promoMessages.upgrade;
+        body.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+        actionBtn.innerText = "VIEW UPGRADE PLANS";
+        actionBtn.onclick = () => { closePromo(); document.querySelector('[data-target=\'subs\']').click(); };
+    }
+
+    popup.classList.add('show');
+
+    // Auto hide after 12 seconds so they have time to read it
+    setTimeout(() => {
+        closePromo();
+    }, 12000);
+}
+
+window.closePromo = function() {
+    document.getElementById('promoPopup').classList.remove('show');
+    scheduleNextPromo();
+}
+
+function scheduleNextPromo() {
+    if (window.isUserLoggedIn && window.userCurrentTier !== 'STANDARD TIER') return;
+    
+    // Random interval between 30 and 90 seconds
+    const nextTime = Math.floor(Math.random() * (90000 - 30000) + 30000);
+    setTimeout(triggerPromo, nextTime);
+}
+
+// Start first promo cycle 5 seconds after load
+setTimeout(() => { triggerPromo(); }, 5000);
 
 setInterval(() => {
     const load = Math.floor(Math.random() * (22 - 8) + 8);
@@ -1051,9 +1162,8 @@ addLoginButtonToNav();
     // LISTEN FOR LOGIN STATE
     onAuthStateChanged(auth, (user) => {
         const loginBtn = document.getElementById('topLoginBtn');
-        const stationStatus = document.querySelector('.station-status');
+        const stationStatuses = document.querySelectorAll('.station-status');
         
-        const navAccount = document.getElementById('nav-account');
         const accEmail = document.getElementById('acc-email');
         const accStatus = document.getElementById('acc-status');
         const accTier = document.getElementById('acc-tier');
@@ -1063,6 +1173,8 @@ addLoginButtonToNav();
         const accDaysProgress = document.getElementById('acc-days-progress');
 
         if (user) {
+            window.isUserLoggedIn = true;
+            
             if(loginBtn) {
                 loginBtn.innerText = "LOGOUT";
                 loginBtn.style.color = "var(--danger)";
@@ -1073,21 +1185,21 @@ addLoginButtonToNav();
                 };
             }
             
-            // Handle Profile Name Logic
             const savedAlias = localStorage.getItem('nexusAlias');
             const defaultName = user.email.split('@');
             const displayAlias = savedAlias ? savedAlias : defaultName;
 
-            stationStatus.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+            stationStatuses.forEach(el => {
+                el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+            });
             
-            // Unlocked state logic
             accEmail.innerText = user.email;
             accStatus.innerText = "SECURE_LINK_ACTIVE";
             accStatus.style.color = "var(--success)";
             nameInput.value = displayAlias;
             
-            // Handle Subscription Logic
             let currentSub = localStorage.getItem('nexusSub') || 'STANDARD TIER';
+            window.userCurrentTier = currentSub; 
             let subDate = localStorage.getItem('nexusSubDate');
             
             accTier.innerText = currentSub;
@@ -1096,7 +1208,6 @@ addLoginButtonToNav();
                 accTierBadge.innerText = "PREMIUM";
                 accTierBadge.style.color = "var(--success)";
                 
-                // Calculate 30-day cycle
                 const daysPassed = Math.floor((Date.now() - parseInt(subDate)) / (1000 * 60 * 60 * 24));
                 const daysRemaining = Math.max(0, 30 - daysPassed);
                 
@@ -1111,8 +1222,9 @@ addLoginButtonToNav();
                     accDaysProgress.style.background = "var(--accent)";
                 }
 
+                document.getElementById('promoPopup').classList.remove('show');
+
             } else {
-                // Free Tier Fallback
                 accTierBadge.innerText = "FREE";
                 accTierBadge.style.color = "var(--accent)";
                 accDaysLeft.innerText = "∞";
@@ -1122,19 +1234,29 @@ addLoginButtonToNav();
             }
 
         } else {
+            window.isUserLoggedIn = false;
+            window.userCurrentTier = 'STANDARD TIER';
+
             if(loginBtn) {
                 loginBtn.innerText = "LOGIN";
                 loginBtn.style.color = "var(--accent)";
                 loginBtn.style.borderColor = "var(--accent)";
-                loginBtn.onclick = () => authModal.classList.add('active');
+                loginBtn.onclick = () => document.getElementById('authModal').classList.add('active');
             }
             
-            stationStatus.innerHTML = `STATION: HP_348_G7<br>LOC: INDIA_REGION<br>STATUS: <span style="color: var(--danger);">UNVERIFIED</span>`;
+            stationStatuses.forEach(el => {
+                el.innerHTML = `STATION: HP_348_G7<br>LOC: INDIA_REGION<br>STATUS: <span style="color: var(--danger);">UNVERIFIED</span>`;
+            });
             
-            // Locked out state logic
             accEmail.innerText = "N/A";
             accStatus.innerText = "UNVERIFIED";
             accStatus.style.color = "var(--danger)";
+            accTier.innerText = "STANDARD TIER";
+            accTierBadge.innerText = "FREE";
+            accTierBadge.style.color = "var(--accent)";
+            accDaysLeft.innerText = "∞";
+            accDaysProgress.style.width = "100%";
+            accDaysProgress.style.background = "var(--accent)";
         }
     });
 </script>
