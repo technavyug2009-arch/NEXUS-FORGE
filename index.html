@@ -23,6 +23,7 @@
     --success: #4ade80;
     --danger: #ef4444;
     --sidebar-width: 260px;
+    --sidebar-collapsed-width: 80px;
 }
 
 body {
@@ -44,7 +45,7 @@ body {
 h1, h2, h3 { margin: 0; }
 
 /* =========================
-   SIDEBAR NAVIGATION (NEW)
+   SIDEBAR NAVIGATION
 ========================= */
 .sidebar {
     position: fixed;
@@ -57,7 +58,7 @@ h1, h2, h3 { margin: 0; }
     display: flex;
     flex-direction: column;
     z-index: 2000;
-    transition: transform 0.3s ease;
+    transition: width 0.3s ease, transform 0.3s ease;
 }
 
 .logo-container {
@@ -66,6 +67,7 @@ h1, h2, h3 { margin: 0; }
     align-items: center;
     padding: 0 30px;
     border-bottom: 1px solid var(--border);
+    transition: padding 0.3s ease;
 }
 
 .logo { 
@@ -74,6 +76,12 @@ h1, h2, h3 { margin: 0; }
     font-size: 1.5rem; 
     letter-spacing: -1px; 
     white-space: nowrap; 
+}
+
+.logo-icon {
+    display: none;
+    font-size: 1.8rem;
+    color: var(--accent);
 }
 
 .nav-links { 
@@ -85,6 +93,7 @@ h1, h2, h3 { margin: 0; }
     margin: 0; 
     flex-grow: 1;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 .nav-links::-webkit-scrollbar { display: none; }
 
@@ -95,17 +104,17 @@ h1, h2, h3 { margin: 0; }
     font-size: 0.9rem;
     border-radius: 8px; 
     cursor: pointer; 
-    transition: 0.3s;
+    transition: 0.3s ease;
     display: flex; 
     align-items: center; 
     gap: 12px; 
     white-space: nowrap;
 }
-.nav-links li svg { fill: currentColor; transition: 0.3s; }
+.nav-links li svg { fill: currentColor; transition: 0.3s; flex-shrink: 0; }
 .nav-links li:hover, .nav-links li.active { 
     background: rgba(59, 130, 246, 0.1); 
     color: white; 
-    box-shadow: inset 3px 0 0 var(--accent); /* Changed to side highlight */
+    box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .station-status {
@@ -115,10 +124,12 @@ h1, h2, h3 { margin: 0; }
     font-size: 0.7rem; 
     color: var(--text-dim); 
     line-height: 1.6; 
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
 }
 
 /* =========================
-   TOPBAR & MOBILE TOGGLE
+   TOPBAR & TOGGLE
 ========================= */
 .topbar {
     position: fixed; 
@@ -136,16 +147,18 @@ h1, h2, h3 { margin: 0; }
     transition: left 0.3s ease;
 }
 
-.mobile-toggle {
-    display: none;
+.sidebar-toggle {
+    display: block;
     background: transparent;
     border: none;
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0;
-    margin-right: 15px;
+    margin-right: 20px;
+    transition: 0.3s ease;
 }
+.sidebar-toggle:hover { color: var(--accent); }
 
 .search-input {
     background: var(--surface); border: 1px solid var(--border); padding: 12px 20px;
@@ -172,15 +185,28 @@ main {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================
-   HOME PAGE
+   DESKTOP COLLAPSED STATE
+========================= */
+@media (min-width: 769px) {
+    .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+    .sidebar.collapsed .link-text { display: none; }
+    .sidebar.collapsed .station-status { display: none; }
+    .sidebar.collapsed .logo-text { display: none; }
+    .sidebar.collapsed .logo-icon { display: block; margin: 0 auto; }
+    .sidebar.collapsed .logo-container { padding: 0; justify-content: center; }
+    .sidebar.collapsed .nav-links li { justify-content: center; padding: 12px 0; }
+    
+    .topbar.collapsed { left: var(--sidebar-collapsed-width); }
+    main.collapsed { margin-left: var(--sidebar-collapsed-width); }
+}
+
+/* =========================
+   HOME PAGE & STORE
 ========================= */
 .hero { background: linear-gradient(45deg, rgba(59,130,246,0.1), transparent); border: 1px solid rgba(59,130,246,0.2); border-radius: 20px; padding: 50px; margin-bottom: 40px; }
 .hero h1 { font-size: 2.8rem; margin-bottom: 15px; }
 .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
 
-/* =========================
-   STORE CATEGORIES, GRID & FILTERS
-========================= */
 .category-title { font-size: 1.5rem; margin: 40px 0 20px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
 
@@ -208,9 +234,6 @@ main {
 .app-info p { color: var(--text-dim); font-size: 0.85rem; margin-top: 5px; line-height: 1.4; }
 .price-tag { position: absolute; top: 15px; right: 15px; background: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; }
 
-/* =========================
-   SUBSCRIPTIONS & SOCIALS
-========================= */
 .sub-features { list-style: none; margin: 20px 0; font-size: 0.85rem; color: var(--text-dim); padding: 0;}
 .sub-features li { margin-bottom: 8px; }
 .sub-features li::before { content: "●"; color: var(--accent); font-size: 0.6rem; margin-right: 8px; }
@@ -263,7 +286,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 .chat-input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
 .chat-input-area input { flex-grow: 1; background: transparent; border: none; color: white; outline: none; font-family: inherit; }
 
-/* AI Animations */
 .blink { animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
@@ -275,12 +297,11 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     .sidebar.open { transform: translateX(0); }
     
     .topbar { left: 0; padding: 0 20px; }
-    .mobile-toggle { display: block; }
     
     main { margin-left: 0; padding: 100px 20px 50px 20px; } 
     
-    .search-input { width: 150px; } /* Shrink search slightly on mobile */
-    .user-status { display: none; } /* Hide technical status on small screens to save space */
+    .search-input { width: 150px; } 
+    .user-status { display: none; } 
     
     .hero { padding: 25px; margin-bottom: 25px; }
     .hero h1 { font-size: 2rem; }
@@ -299,50 +320,53 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
 <aside class="sidebar" id="sidebar">
     <div class="logo-container">
-        <div class="logo">NEXUS FORGE</div>
+        <div class="logo">
+            <span class="logo-icon">NF</span>
+            <span class="logo-text">NEXUS FORGE</span>
+        </div>
     </div>
     
     <ul class="nav-links" id="navLinks">
-        <li data-target="home" class="active">
+        <li data-target="home" class="active" title="Command Center">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3l9 9h-3v9h-4v-6h-4v6H6v-9H3l9-9z"/></svg>
-            Command Center
+            <span class="link-text">Command Center</span>
         </li>
-        <li data-target="store" id="nav-store">
+        <li data-target="store" id="nav-store" title="Global Archives">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg>
-            Global Archives
+            <span class="link-text">Global Archives</span>
         </li>
-        <li data-target="subs">
+        <li data-target="subs" title="Cloud Access">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-            Cloud Access
+            <span class="link-text">Cloud Access</span>
         </li>
-        <li data-target="library">
+        <li data-target="library" title="My Vault">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z"/></svg>
-            My Vault
+            <span class="link-text">My Vault</span>
         </li>
-        <li data-target="account" id="nav-account" style="display: none;">
+        <li data-target="account" id="nav-account" title="Operative Profile">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            Account
+            <span class="link-text">Account</span>
         </li>
-        <li data-target="dev-info">
+        <li data-target="dev-info" title="About Us">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            About Us
+            <span class="link-text">About Us</span>
         </li>
-        <li data-target="contact">
+        <li data-target="contact" title="Secure Comms">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-            Comms
+            <span class="link-text">Comms</span>
         </li>
     </ul>
 
     <div class="station-status">
         STATION: HP_348_G7<br>
         LOC: INDIA_REGION<br>
-        STATUS: <span style="color: var(--success);">ENCRYPTED</span>
+        STATUS: <span style="color: var(--danger);">UNVERIFIED</span>
     </div>
 </aside>
 
 <div class="topbar">
     <div style="display: flex; align-items: center;">
-        <button class="mobile-toggle" id="mobileToggle">☰</button>
+        <button class="sidebar-toggle" id="sidebarToggle">☰</button>
         <input type="text" id="searchInput" class="search-input" placeholder="Search archives...">
     </div>
     <div class="user-status" id="topbarUserArea">
@@ -371,7 +395,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
     <section id="store" class="view-section">
         <h1 style="font-size: 2.5rem;">Archives</h1>
-        
         <div class="filter-bar" id="filterBar">
             <button class="filter-btn active" data-filter="All">All</button>
             <button class="filter-btn" data-filter="FPS">FPS</button>
@@ -382,7 +405,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
             <button class="filter-btn" data-filter="Multiplayer">Multiplayer</button>
             <button class="filter-btn" data-filter="PC Playable">PC Playable</button>
         </div>
-
         <div id="storeContainer"></div>
         <div id="noResultsMsg" style="display: none; color: var(--text-dim); margin-top: 30px; text-align: center; font-family: 'JetBrains Mono';">
             No matching payloads found in the Global Archives for this filter.
@@ -421,14 +443,21 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
     <section id="account" class="view-section">
         <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Operative Profile</h1>
-        <p style="color: var(--text-dim); margin-bottom: 40px;">Manage your secure connection and active protocols.</p>
+        <p style="color: var(--text-dim); margin-bottom: 40px;">Manage your secure connection, alias, and active protocols.</p>
 
         <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+            
             <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); flex: 1; min-width: 300px; box-sizing: border-box;">
                 <h3 style="color: var(--accent); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
                     <span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);"></span>
-                    Identification
+                    Operative Identification
                 </h3>
+                
+                <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 0;">OPERATIVE ALIAS</p>
+                <div style="display: flex; gap: 10px; margin: 5px 0 20px 0;">
+                    <input type="text" id="acc-name-input" placeholder="Enter Alias..." style="background: var(--surface); border: 1px solid var(--border); padding: 10px 15px; color: white; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 0.85rem; flex-grow: 1; outline: none;">
+                    <button class="btn-secondary" style="width: auto; padding: 10px 15px; font-size: 0.8rem;" onclick="saveAlias()">SAVE</button>
+                </div>
                 
                 <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">UPLINK EMAIL</p>
                 <p id="acc-email" style="font-family: 'JetBrains Mono'; margin: 5px 0 20px 0; color: var(--text);">N/A</p>
@@ -440,16 +469,24 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
                 <p id="acc-status" style="font-family: 'JetBrains Mono'; margin: 5px 0 0 0; color: var(--danger);">UNVERIFIED</p>
             </div>
 
-            <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.1); flex: 1; min-width: 300px; box-sizing: border-box;">
+            <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.1); flex: 1; min-width: 300px; box-sizing: border-box; display: flex; flex-direction: column;">
                 <h3 style="color: var(--text); margin-bottom: 20px;">Active Protocol</h3>
                 
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                     <h2 id="acc-tier" style="font-size: 2rem; margin: 0; color: var(--accent);">STANDARD TIER</h2>
                     <span id="acc-tier-badge" style="background: rgba(59,130,246,0.1); padding: 5px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; color: var(--accent);">FREE</span>
                 </div>
                 
-                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px;">
-                    Your current plan allows for local browser execution and standard global archive access. For heavy computational bypass, upgrade your protocol.
+                <div style="background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 0 0 5px 0;">CYCLE REMAINING</p>
+                    <p id="acc-days-left" style="font-family: 'JetBrains Mono'; font-size: 1.2rem; margin: 0; color: var(--text);">∞</p>
+                    <div style="background: #222; height: 4px; border-radius: 2px; margin-top: 10px; overflow: hidden;">
+                        <div id="acc-days-progress" style="height: 100%; background: var(--accent); width: 100%; transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+                
+                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">
+                    Your current plan dictates your cloud execution limits. Upgrade your protocol to maximize output.
                 </p>
                 
                 <button class="btn-primary" onclick="document.querySelector('[data-target=\'subs\']').click()">UPGRADE CLEARANCE</button>
@@ -494,7 +531,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
                         <a href="https://github.com" class="social-link" title="GitHub Database"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
                         <a href="#" class="social-link" title="Youtube"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
                         <a href="#" class="social-link" title="Professional Network"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
-                        <a href="#" class="social-link" title="Secure Comms Channel"><svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></a>
                     </div>
                 </div>
             </div>
@@ -559,7 +595,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
         
         <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
             <input type="email" id="emailInput" placeholder="Operative Email" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono'; font-size: 0.85rem;">
-            
             <input type="password" id="passwordInput" placeholder="Encryption Key (Password)" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono'; font-size: 0.85rem;">
         </div>
 
@@ -569,7 +604,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
             <span id="authToggleText">No profile found?</span> 
             <span id="authToggleBtn" style="color: var(--accent); cursor: pointer; font-weight: 800; border-bottom: 1px solid var(--accent);">REGISTER HERE</span>
         </div>
-        
         <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.75rem;" onclick="document.getElementById('authModal').classList.remove('active')">CANCEL</button>
     </div>
 </div>
@@ -605,9 +639,6 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 </div>
 
 <script>
-/* =========================
-   DATA MODEL & STATE
-========================= */
 const apps = [
     { id: 0, title: "GTA VICE CITY", desc: "Open world 80s classic. Optimized for HP 348 G7 integrated graphics.", category: "Games", size: 1400, url: "https://quenq.com/apps/vice-city/", img: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=400", playable: true, genres: ['Open World', 'Racing', 'Role Play', 'PC Playable'], keywords: ['car', 'driving', 'crime', 'action', 'retro'] },
     { id: 1, title: "DEADSHOT.IO", desc: "Fast-paced FPS browser shooter. Zero download required.", category: "Games", size: 85, url: "https://deadshot.io", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['gun', 'multiplayer', 'shooter', 'fps'] },
@@ -616,78 +647,16 @@ const apps = [
     { id: 4, title: "MINECRAFT WEB", desc: "Classic block-building survival. Full browser port, no installation needed.", category: "Games", size: 300, url: "https://minecraftweb.pages.dev/", img: "https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=400", playable: true, genres: ['Open World', 'Role Play', 'Multiplayer', 'PC Playable'], keywords: ['blocks', 'survival', 'crafting', 'building', 'mc'] },
     { id: 5, title: "KRUNKER.IO", desc: "Fast-paced pixel FPS. Highly optimized for competitive browser tracking.", category: "Games", size: 65, url: "https://krunker.io", img: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['fps', 'shooter', 'multiplayer', 'pixel', 'krunker', 'action'] },
     { id: 6, title: "SMASH KARTS", desc: "Fast-paced 3D multiplayer kart battle. Collect weapons and blow up opponents in the arena.", category: "Games", size: 95, url: "https://smashkarts.io", img: "https://images.unsplash.com/photo-1614294148960-9aa740632a87?q=80&w=400", playable: true, genres: ['Racing', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['kart', 'racing', 'multiplayer', 'battle', 'smash', 'io', 'car'] },
-    { 
-        id: 7, 
-        title: "SLOW ROADS", 
-        desc: "An extremely chill, endless driving game about traveling through infinite, procedural terrain. Relaxing and scenic.", 
-        category: "Games", 
-        size: 55, 
-        url: "https://slowroads.io/", 
-        img: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=400", 
-        playable: true, 
-        genres: ['Open World', 'Racing', 'PC Playable'], 
-        keywords: ['driving', 'relaxing', 'procedural', 'infinite', 'car', 'chill'] 
-    },
-    { 
-        id: 10, 
-        title: "TURNFIGHT", 
-        desc: "Fast-paced multiplayer aerial dogfighting. Take to the skies, outmaneuver opponents, and dominate the airspace.", 
-        category: "Games", 
-        size: 65, 
-        url: "https://turnfight.com/", 
-        img: "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=400", 
-        playable: true, 
-        genres: ['Shooting', 'Multiplayer', 'PC Playable'], 
-        keywords: ['flight', 'plane', 'sky', 'combat', 'flying', 'dogfight', 'shooter'] 
-    },
-    { 
-        id: 11, 
-        title: "RAIDFIELD", 
-        desc: "World War II themed multiplayer shooter. Conquer territories, pilot vehicles, and fight on the frontlines.", 
-        category: "Games", 
-        size: 90, 
-        url: "https://raidfield.com/", 
-        img: "https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=400", 
-        playable: true, 
-        genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], 
-        keywords: ['ww2', 'war', 'battle', 'multiplayer', 'shooter', 'tank', 'combat', 'army'] 
-    },
-    { 
-        id: 13, 
-        title: "MADALIN STUNT CARS 2", 
-        desc: "An open-world sandbox with a massive vehicle roster to burn rubber. Features massive jumps and realistic physics.", 
-        category: "Games", 
-        size: 85, 
-        url: "https://madalinstuntcars2.io/", 
-        img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=400", 
-        playable: true, 
-        genres: ['Open World', 'Racing', 'Multiplayer', 'PC Playable'], 
-        keywords: ['driving', 'stunts', 'cars', 'supercars', 'racing', 'sandbox'] 
-    },
-    { 
-        id: 14, 
-        title: "BITBURNER", 
-        desc: "A cyberpunk incremental RPG where you write actual JavaScript to automate network hacking and build an empire. Fits the Command Center aesthetic flawlessly.", 
-        category: "Games", 
-        size: 40, 
-        url: "https://danielyxie.github.io/bitburner/", 
-        img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400", 
-        playable: true, 
-        genres: ['Role Play', 'PC Playable'], 
-        keywords: ['coding', 'hacking', 'javascript', 'cyberpunk', 'programming', 'idle'] 
-    },
-    { 
-        id: 15, 
-        title: "SHELL SHOCKERS", 
-        desc: "The world's top egg-based shooter. Equip devastating weapons and scramble the competition in fast-paced arena combat.", 
-        category: "Games", 
-        size: 70, 
-        url: "https://shellshock.io/", 
-        img: "https://images.unsplash.com/photo-1587588354456-ae376af71a25?q=80&w=400", 
-        playable: true, 
-        genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], 
-        keywords: ['egg', 'fps', 'shooter', 'multiplayer', 'arena', 'combat'] 
-    },
+    { id: 7, title: "SLOW ROADS", desc: "An extremely chill, endless driving game about traveling through infinite, procedural terrain. Relaxing and scenic.", category: "Games", size: 55, url: "https://slowroads.io/", img: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=400", playable: true, genres: ['Open World', 'Racing', 'PC Playable'], keywords: ['driving', 'relaxing', 'procedural', 'infinite', 'car', 'chill'] },
+    { id: 10, title: "TURNFIGHT", desc: "Fast-paced multiplayer aerial dogfighting. Take to the skies, outmaneuver opponents, and dominate the airspace.", category: "Games", size: 65, url: "https://turnfight.com/", img: "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=400", playable: true, genres: ['Shooting', 'Multiplayer', 'PC Playable'], keywords: ['flight', 'plane', 'sky', 'combat', 'flying', 'dogfight', 'shooter'] },
+    { id: 11, title: "RAIDFIELD", desc: "World War II themed multiplayer shooter. Conquer territories, pilot vehicles, and fight on the frontlines.", category: "Games", size: 90, url: "https://raidfield.com/", img: "https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['ww2', 'war', 'battle', 'multiplayer', 'shooter', 'tank', 'combat', 'army'] },
+    { id: 12, title: "1V1.LOL", desc: "Highly competitive tactical shooter. Master the mechanics of rapid building and box-fighting to outplay opponents.", category: "Games", size: 110, url: "https://1v1.lol/", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['building', 'battle royale', 'competitive', 'shooter', 'fps', '1v1'] },
+    { id: 13, title: "MADALIN STUNT CARS 2", desc: "An open-world sandbox with a massive vehicle roster to burn rubber. Features massive jumps and realistic physics.", category: "Games", size: 85, url: "https://madalinstuntcars2.io/", img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=400", playable: true, genres: ['Open World', 'Racing', 'Multiplayer', 'PC Playable'], keywords: ['driving', 'stunts', 'cars', 'supercars', 'racing', 'sandbox'] },
+    { id: 14, title: "BITBURNER", desc: "A cyberpunk incremental RPG where you write actual JavaScript to automate network hacking and build an empire. Fits the Command Center aesthetic flawlessly.", category: "Games", size: 40, url: "https://danielyxie.github.io/bitburner/", img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400", playable: true, genres: ['Role Play', 'PC Playable'], keywords: ['coding', 'hacking', 'javascript', 'cyberpunk', 'programming', 'idle'] },
+    { id: 15, title: "SHELL SHOCKERS", desc: "The world's top egg-based shooter. Equip devastating weapons and scramble the competition in fast-paced arena combat.", category: "Games", size: 70, url: "https://shellshock.io/", img: "https://images.unsplash.com/photo-1587588354456-ae376af71a25?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['egg', 'fps', 'shooter', 'multiplayer', 'arena', 'combat'] },
+    { id: 16, title: "GRAND THEFT AUTO V", desc: "The ultimate AAA open-world experience. Explore Los Santos and Blaine County. High-fidelity stream via Elite Protocol.", category: "Games", size: 105000, url: "https://now.gg/play/rockstar-games/gta-v", img: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=400", playable: true, genres: ['Open World', 'Shooting', 'Role Play', 'Racing', 'Multiplayer'], keywords: ['gta', 'gta 5', 'gta v', 'los santos', 'aaa', 'crime', 'heist'] },
+    { id: 17, title: "GTA: SAN ANDREAS", desc: "The legendary 90s West Coast adventure. Fully optimized for the Forge. Welcome back to Los Santos.", category: "Games", size: 4500, url: "https://quenq.com/apps/san-andreas/", img: "https://images.unsplash.com/photo-1580130379624-3a0690cb26c6?q=80&w=400", playable: true, genres: ['Open World', 'Shooting', 'Role Play', 'Racing', 'PC Playable'], keywords: ['gta', 'cj', 'san andreas', 'crime', 'classic', 'retro'] },
+    { id: 18, title: "GTA III", desc: "The game that started the 3D open-world revolution. Navigate the dark, gritty streets of Liberty City.", category: "Games", size: 1200, url: "https://quenq.com/apps/gta3/", img: "https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?q=80&w=400", playable: true, genres: ['Open World', 'Shooting', 'Role Play', 'PC Playable'], keywords: ['gta', 'liberty city', 'mafia', 'crime', 'classic', '3'] }
 ];
 
 let vault = JSON.parse(localStorage.getItem('nexusVault')) || [];
@@ -708,25 +677,28 @@ const DOM = {
     noResultsMsg: document.getElementById('noResultsMsg'),
     filterBtns: document.querySelectorAll('.filter-btn'),
     sidebar: document.getElementById('sidebar'),
-    mobileToggle: document.getElementById('mobileToggle')
+    sidebarToggle: document.getElementById('sidebarToggle'),
+    topbar: document.querySelector('.topbar'),
+    main: document.querySelector('main')
 };
 
-/* =========================
-   ROUTING & SIDEBAR LOGIC
-========================= */
-// Toggle Sidebar on Mobile
-DOM.mobileToggle.addEventListener('click', () => {
-    DOM.sidebar.classList.toggle('open');
+// Sidebar Toggle
+DOM.sidebarToggle.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+        DOM.sidebar.classList.toggle('open');
+    } else {
+        DOM.sidebar.classList.toggle('collapsed');
+        DOM.topbar.classList.toggle('collapsed');
+        DOM.main.classList.toggle('collapsed');
+    }
 });
 
+// Routing
 DOM.navLinks.addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (!li) return;
     
-    // Close sidebar on mobile after clicking a link
-    if(window.innerWidth <= 768) {
-        DOM.sidebar.classList.remove('open');
-    }
+    if(window.innerWidth <= 768) DOM.sidebar.classList.remove('open');
     
     if(DOM.searchInput.value !== '') {
         DOM.searchInput.value = '';
@@ -746,16 +718,13 @@ DOM.navLinks.addEventListener('click', (e) => {
 function teleportToStore() {
     document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active'));
     document.getElementById('nav-store').classList.add('active');
-    
     DOM.sections.forEach(sec => {
         sec.classList.remove('active');
         if (sec.id === 'store') sec.classList.add('active');
     });
 }
 
-/* =========================
-   FILTER BAR LOGIC
-========================= */
+// Rendering & Filtering
 DOM.filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         DOM.filterBtns.forEach(b => b.classList.remove('active'));
@@ -765,9 +734,6 @@ DOM.filterBtns.forEach(btn => {
     });
 });
 
-/* =========================
-   RENDER STORE & OMNI-SEARCH
-========================= */
 function renderStore() {
     const categories = [...new Set(apps.map(app => app.category))];
     let html = '';
@@ -792,17 +758,13 @@ function filterStore() {
     let groups = document.querySelectorAll('.category-group');
     let hasVisibleCards = false;
 
-    if(input.length > 0 && !document.getElementById('store').classList.contains('active')) {
-        teleportToStore();
-    }
+    if(input.length > 0 && !document.getElementById('store').classList.contains('active')) teleportToStore();
 
     cards.forEach(card => {
         let name = card.querySelector('.app-name').innerText.toUpperCase();
         let desc = card.querySelector('.app-desc').innerText.toUpperCase();
         let keywords = card.dataset.keywords; 
-        
         let matchesSearch = (name.includes(input) || desc.includes(input) || keywords.includes(input));
-        
         let cardGenres = card.dataset.genres ? card.dataset.genres.split(',') : [];
         let matchesGenre = (activeGenreFilter === 'All' || cardGenres.includes(activeGenreFilter));
 
@@ -819,18 +781,11 @@ function filterStore() {
         group.style.display = visibleCards.length === 0 ? "none" : "block";
     });
 
-    if (!hasVisibleCards) {
-        DOM.noResultsMsg.style.display = "block";
-    } else {
-        DOM.noResultsMsg.style.display = "none";
-    }
+    DOM.noResultsMsg.style.display = hasVisibleCards ? "none" : "block";
 }
-
 DOM.searchInput.addEventListener('input', filterStore);
 
-/* =========================
-   MODAL & EVENTS
-========================= */
+// Modals & Deployments
 DOM.storeContainer.addEventListener('click', e => {
     const card = e.target.closest('.app-card');
     if (!card) return;
@@ -848,45 +803,22 @@ function openModal(app) {
 }
 function closeModal() { DOM.modal.classList.remove('active'); }
 
-/* =========================
-   GAME PLAYER (IFRAME & EXTERNAL)
-========================= */
-DOM.playBtn.onclick = () => {
-    closeModal();
-    document.getElementById('game-frame').src = currentApp.url;
-    document.getElementById('game-player').classList.add('active');
-};
+DOM.playBtn.onclick = () => { closeModal(); document.getElementById('game-frame').src = currentApp.url; document.getElementById('game-player').classList.add('active'); };
+DOM.externalBtn.onclick = () => { closeModal(); window.open(currentApp.url, '_blank'); };
+function exitGame() { document.getElementById('game-player').classList.remove('active'); document.getElementById('game-frame').src = ""; }
 
-DOM.externalBtn.onclick = () => {
-    closeModal();
-    window.open(currentApp.url, '_blank'); 
-};
-
-function exitGame() {
-    document.getElementById('game-player').classList.remove('active');
-    document.getElementById('game-frame').src = "";
-}
-
-/* =========================
-   DOWNLOAD & VAULT
-========================= */
 DOM.deployBtn.onclick = () => {
     closeModal();
     const bar = document.getElementById('downloadBar');
     const text = document.getElementById('dlText');
     const prog = document.getElementById('progress');
-    bar.style.display = 'block';
-    text.textContent = `Deploying ${currentApp.title}...`;
-    
+    bar.style.display = 'block'; text.textContent = `Deploying ${currentApp.title}...`;
     let progress = 0;
     const interval = setInterval(() => {
         progress += Math.random() * 15;
         if (progress >= 100) {
-            progress = 100;
-            clearInterval(interval);
-            text.textContent = "Deployment Complete";
-            addToVault(currentApp);
-            setTimeout(() => { bar.style.display = 'none'; prog.style.width = "0%"; }, 2000);
+            progress = 100; clearInterval(interval); text.textContent = "Deployment Complete";
+            addToVault(currentApp); setTimeout(() => { bar.style.display = 'none'; prog.style.width = "0%"; }, 2000);
         }
         prog.style.width = progress + "%";
     }, 200);
@@ -902,62 +834,62 @@ function renderVault() {
         <div class="app-card">
             <img src="${item.img}" style="height: 120px; width: 100%; object-fit: cover;">
             <div class="price-tag" style="background: var(--success); color: #000;">ACTIVE</div>
-            <div class="app-info">
-                <h3>${item.title}</h3>
-                <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">Installed on HP Station.</p>
-            </div>
+            <div class="app-info"><h3>${item.title}</h3><p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">Installed on HP Station.</p></div>
         </div>
     `).join('');
 }
 
 function addToVault(app) {
     if(!vault.find(v => v.id === app.id)) {
-        vault.push(app);
-        localStorage.setItem('nexusVault', JSON.stringify(vault));
-        renderVault();
+        vault.push(app); localStorage.setItem('nexusVault', JSON.stringify(vault)); renderVault();
     }
 }
 
-/* =========================
-   SUBSCRIPTION MOCK PURCHASE
-========================= */
-function purchaseTier(tierName) {
+// PROFILE UPDATES
+window.saveAlias = function() {
+    const input = document.getElementById('acc-name-input').value.trim();
+    if(input) {
+        localStorage.setItem('nexusAlias', input);
+        alert(`Alias successfully updated to: ${input}`);
+        
+        const stationStatus = document.querySelector('.station-status');
+        stationStatus.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${input.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+    }
+}
+
+window.purchaseTier = function(tierName) {
     alert(`Uplink established. Successfully upgraded to ${tierName}.`);
+    
     localStorage.setItem('nexusSub', tierName);
+    localStorage.setItem('nexusSubDate', Date.now().toString());
     
     document.getElementById('acc-tier').innerText = tierName;
     document.getElementById('acc-tier-badge').innerText = "PREMIUM";
     document.getElementById('acc-tier-badge').style.color = "var(--success)";
     
+    document.getElementById('acc-days-left').innerText = "30 DAYS";
+    document.getElementById('acc-days-left').style.color = "var(--text)";
+    document.getElementById('acc-days-progress').style.width = "100%";
+    document.getElementById('acc-days-progress').style.background = "var(--accent)";
+    
     document.querySelector('[data-target=\'account\']').click();
 }
 
-/* =========================
-   UI NAV LOGIC
-========================= */
 function addLoginButtonToNav() {
     const topbarUserArea = document.getElementById('topbarUserArea');
     const loginBtn = document.createElement('button');
     loginBtn.className = "btn-secondary";
-    loginBtn.style.width = "auto";
-    loginBtn.style.padding = "6px 20px";
-    loginBtn.style.border = "1px solid var(--accent)";
-    loginBtn.style.color = "var(--accent)";
-    loginBtn.innerText = "LOGIN";
-    loginBtn.id = "topLoginBtn";
+    loginBtn.style.width = "auto"; loginBtn.style.padding = "6px 20px";
+    loginBtn.style.border = "1px solid var(--accent)"; loginBtn.style.color = "var(--accent)";
+    loginBtn.innerText = "LOGIN"; loginBtn.id = "topLoginBtn";
     loginBtn.onclick = () => document.getElementById('authModal').classList.add('active');
-    
     topbarUserArea.appendChild(loginBtn);
 }
 
-/* =========================
-   RULE-BASED CHAT SYSTEM
-========================= */
+// Chatbot
 function toggleChat() { 
     document.getElementById('chatWindow').classList.toggle('open');
-    if(document.getElementById('chatWindow').classList.contains('open')) {
-        document.getElementById('chatInput').focus();
-    }
+    if(document.getElementById('chatWindow').classList.contains('open')) document.getElementById('chatInput').focus();
 }
 
 function sendMessage() {
@@ -967,8 +899,7 @@ function sendMessage() {
     if(!text) return;
 
     body.innerHTML += `<div class="chat-msg user">${text}</div>`;
-    input.value = "";
-    body.scrollTop = body.scrollHeight;
+    input.value = ""; body.scrollTop = body.scrollHeight;
 
     const botResponse = processRuleBasedQuery(text.toLowerCase());
     simulateTypingAndRespond(botResponse);
@@ -989,48 +920,16 @@ function simulateTypingAndRespond(responseHTML) {
 }
 
 function processRuleBasedQuery(cmd) {
-    if(cmd === '/help' || cmd === 'help') {
-        return "NEXUS FORGE SUPPORT DIRECTIVES:<br><br><b>Commands:</b><br><span style='color:var(--accent)'>/status</span> : Hardware check<br><span style='color:var(--accent)'>/clear</span> : Purge memory<br><span style='color:var(--accent)'>theme [color]</span> : Change UI accent<br><br><b>Support Queries:</b> Ask me about <i>pricing</i>, <i>games</i>, <i>hardware</i>, or how to <i>deploy</i> apps.";
-    }
-    if(cmd === '/clear') {
-        setTimeout(() => { document.getElementById('chatBody').innerHTML = '<div class="chat-msg bot">Logs purged. Awaiting next command.</div>'; }, 600);
-        return "Executing memory wipe...";
-    }
-    if(cmd === '/status' || cmd === 'status') {
-        const load = document.getElementById('station-load').innerText.split('|').trim();
-        return `STATION DIAGNOSTICS:<br>Hardware: HP 348 G7<br>CPU ${load}<br>Network: SECURE_TUNNEL_ACTIVE<br>Location: INDIA_REGION`;
-    }
-    if(cmd.startsWith('theme ')) {
-        let color = cmd.split('theme ').trim();
-        document.documentElement.style.setProperty('--accent', color);
-        document.documentElement.style.setProperty('--accent-glow', `color-mix(in srgb, ${color} 40%, transparent)`);
-        return `Success: System accent color overridden to <span style="color:${color}">${color}</span>.`;
-    }
-
-    if(cmd.includes('price') || cmd.includes('cost') || cmd.includes('tier') || cmd.includes('subscription') || cmd.includes('pay')) {
-        return "We offer two Cloud Access Tiers to bypass local hardware limits:<br><br>• <b>LITE PROTOCOL (₹499/mo)</b>: 1080p/60FPS.<br>• <b>ELITE PROTOCOL (₹939/mo)</b>: 1440p/120FPS.<br><br>Click the 'Cloud Access' tab above to initialize a tier.";
-    }
-
-    if(cmd.includes('game') || cmd.includes('app') || cmd.includes('archive') || cmd.includes('catalog')) {
-        return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Krunker.io</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly.";
-    }
-
-    if(cmd.includes('hardware') || cmd.includes('requirement') || cmd.includes('hp 348') || cmd.includes('pc') || cmd.includes('laptop')) {
-        return "NEXUS FORGE is designed to run on any setup. It runs perfectly on your HP 348 G7 by utilizing encrypted high-speed streaming, removing the need for a high-end GPU.";
-    }
-
-    if(cmd.includes('contact') || cmd.includes('support') || cmd.includes('help me') || cmd.includes('email') || cmd.includes('issue')) {
-        return "Need human assistance? Navigate to the 'Comms' tab to send a secure transmission, or email the lead architect at <b>technavyug2009@gmail.com</b>.";
-    }
-
-    if(cmd.includes('deploy') || cmd.includes('install') || cmd.includes('play') || cmd.includes('how to')) {
-        return "To deploy an app:<br>1. Go to the 'Global Archives'.<br>2. Click on the app card.<br>3. Select 'Deploy Payload' (to add to your Vault) or 'Launch in Browser' to play immediately.";
-    }
-    
-    if(cmd === 'hi' || cmd === 'hello' || cmd === 'hey' || cmd === 'greetings') {
-        return "Greetings. I am the NEXUS FORGE automated support bot. Ask me about pricing, games, hardware requirements, or type 'help'.";
-    }
-
+    if(cmd === '/help' || cmd === 'help') return "NEXUS FORGE SUPPORT DIRECTIVES:<br><br><b>Commands:</b><br><span style='color:var(--accent)'>/status</span> : Hardware check<br><span style='color:var(--accent)'>/clear</span> : Purge memory<br><span style='color:var(--accent)'>theme [color]</span> : Change UI accent<br><br><b>Support Queries:</b> Ask me about <i>pricing</i>, <i>games</i>, <i>hardware</i>, or how to <i>deploy</i> apps.";
+    if(cmd === '/clear') { setTimeout(() => { document.getElementById('chatBody').innerHTML = '<div class="chat-msg bot">Logs purged. Awaiting next command.</div>'; }, 600); return "Executing memory wipe..."; }
+    if(cmd === '/status' || cmd === 'status') { const load = document.getElementById('station-load').innerText.split('|').trim(); return `STATION DIAGNOSTICS:<br>Hardware: HP 348 G7<br>CPU ${load}<br>Network: SECURE_TUNNEL_ACTIVE<br>Location: INDIA_REGION`; }
+    if(cmd.startsWith('theme ')) { let color = cmd.split('theme ').trim(); document.documentElement.style.setProperty('--accent', color); document.documentElement.style.setProperty('--accent-glow', `color-mix(in srgb, ${color} 40%, transparent)`); return `Success: System accent color overridden to <span style="color:${color}">${color}</span>.`; }
+    if(cmd.includes('price') || cmd.includes('cost') || cmd.includes('tier') || cmd.includes('subscription') || cmd.includes('pay')) return "We offer two Cloud Access Tiers to bypass local hardware limits:<br><br>• <b>LITE PROTOCOL (₹499/mo)</b>: 1080p/60FPS.<br>• <b>ELITE PROTOCOL (₹939/mo)</b>: 1440p/120FPS.<br><br>Click the 'Cloud Access' tab above to initialize a tier.";
+    if(cmd.includes('game') || cmd.includes('app') || cmd.includes('archive') || cmd.includes('catalog')) return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Krunker.io</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly.";
+    if(cmd.includes('hardware') || cmd.includes('requirement') || cmd.includes('hp 348') || cmd.includes('pc') || cmd.includes('laptop')) return "NEXUS FORGE is designed to run on any setup. It runs perfectly on your HP 348 G7 by utilizing encrypted high-speed streaming, removing the need for a high-end GPU.";
+    if(cmd.includes('contact') || cmd.includes('support') || cmd.includes('help me') || cmd.includes('email') || cmd.includes('issue')) return "Need human assistance? Navigate to the 'Comms' tab to send a secure transmission, or email the lead architect at <b>technavyug2009@gmail.com</b>.";
+    if(cmd.includes('deploy') || cmd.includes('install') || cmd.includes('play') || cmd.includes('how to')) return "To deploy an app:<br>1. Go to the 'Global Archives'.<br>2. Click on the app card.<br>3. Select 'Deploy Payload' (to add to your Vault) or 'Launch in Browser' to play immediately.";
+    if(cmd === 'hi' || cmd === 'hello' || cmd === 'hey' || cmd === 'greetings') return "Greetings. I am the NEXUS FORGE automated support bot. Ask me about pricing, games, hardware requirements, or type 'help'.";
     return "Command unrecognized. As a secure rule-based construct, I can only respond to queries about the Forge (e.g., 'pricing', 'games', 'hardware', 'support'). Type 'help' for options.";
 }
 
@@ -1121,6 +1020,7 @@ addLoginButtonToNav();
         }
     });
 
+    // LISTEN FOR LOGIN STATE
     onAuthStateChanged(auth, (user) => {
         const loginBtn = document.getElementById('topLoginBtn');
         const stationStatus = document.querySelector('.station-status');
@@ -1130,6 +1030,9 @@ addLoginButtonToNav();
         const accStatus = document.getElementById('acc-status');
         const accTier = document.getElementById('acc-tier');
         const accTierBadge = document.getElementById('acc-tier-badge');
+        const nameInput = document.getElementById('acc-name-input');
+        const accDaysLeft = document.getElementById('acc-days-left');
+        const accDaysProgress = document.getElementById('acc-days-progress');
 
         if (user) {
             if(loginBtn) {
@@ -1142,19 +1045,52 @@ addLoginButtonToNav();
                 };
             }
             
-            const username = user.email.split('@').toUpperCase();
-            stationStatus.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${username}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
+            // Handle Profile Name Logic
+            const savedAlias = localStorage.getItem('nexusAlias');
+            const defaultName = user.email.split('@');
+            const displayAlias = savedAlias ? savedAlias : defaultName;
+
+            stationStatus.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
             
-            navAccount.style.display = "flex";
+            // Unlocked state logic
             accEmail.innerText = user.email;
             accStatus.innerText = "SECURE_LINK_ACTIVE";
             accStatus.style.color = "var(--success)";
+            nameInput.value = displayAlias;
             
+            // Handle Subscription Logic
             let currentSub = localStorage.getItem('nexusSub') || 'STANDARD TIER';
+            let subDate = localStorage.getItem('nexusSubDate');
+            
             accTier.innerText = currentSub;
-            if(currentSub !== 'STANDARD TIER') {
+            
+            if(currentSub !== 'STANDARD TIER' && subDate) {
                 accTierBadge.innerText = "PREMIUM";
                 accTierBadge.style.color = "var(--success)";
+                
+                // Calculate 30-day cycle
+                const daysPassed = Math.floor((Date.now() - parseInt(subDate)) / (1000 * 60 * 60 * 24));
+                const daysRemaining = Math.max(0, 30 - daysPassed);
+                
+                accDaysLeft.innerText = `${daysRemaining} DAYS`;
+                accDaysProgress.style.width = `${(daysRemaining / 30) * 100}%`;
+                
+                if (daysRemaining === 0) {
+                    accDaysLeft.style.color = "var(--danger)";
+                    accDaysProgress.style.background = "var(--danger)";
+                } else {
+                    accDaysLeft.style.color = "var(--text)";
+                    accDaysProgress.style.background = "var(--accent)";
+                }
+
+            } else {
+                // Free Tier Fallback
+                accTierBadge.innerText = "FREE";
+                accTierBadge.style.color = "var(--accent)";
+                accDaysLeft.innerText = "∞";
+                accDaysProgress.style.width = "100%";
+                accDaysLeft.style.color = "var(--text)";
+                accDaysProgress.style.background = "var(--accent)";
             }
 
         } else {
@@ -1167,7 +1103,7 @@ addLoginButtonToNav();
             
             stationStatus.innerHTML = `STATION: HP_348_G7<br>LOC: INDIA_REGION<br>STATUS: <span style="color: var(--danger);">UNVERIFIED</span>`;
             
-            navAccount.style.display = "none";
+            // Locked out state logic
             accEmail.innerText = "N/A";
             accStatus.innerText = "UNVERIFIED";
             accStatus.style.color = "var(--danger)";
