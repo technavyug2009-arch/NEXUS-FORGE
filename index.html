@@ -634,23 +634,46 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 <div class="modal" id="authModal">
     <div class="modal-box" style="text-align: center;">
         <div style="width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 20px auto;">
-            🔐
+            👋
         </div>
-        <h2 id="authTitle" style="color: var(--accent); font-family: 'JetBrains Mono'; letter-spacing: 1px;">SYSTEM LOGIN</h2>
-        <p id="authSubtitle" style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 25px;">Enter credentials to access your Vault.</p>
+        <h2 id="authTitle" style="color: white; font-family: 'Plus Jakarta Sans'; margin-bottom: 5px;">Welcome Back</h2>
+        <p id="authSubtitle" style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px;">Login to access your saved games and settings.</p>
         
-        <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
-            <input type="email" id="emailInput" placeholder="Operative Email" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono'; font-size: 0.85rem;">
-            <input type="password" id="passwordInput" placeholder="Encryption Key (Password)" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono'; font-size: 0.85rem;">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            <button id="googleLoginBtn" class="btn-secondary" style="background: white; color: black; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600;">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 15.02 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Continue with Google
+            </button>
+            <div style="display: flex; gap: 10px;">
+                <button id="appleLoginBtn" class="btn-secondary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.15 2.95.97 3.83 2.14-3.25 1.94-2.73 6.32.4 7.6-.73 1.25-1.57 2.45-2.88 3.27zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    Apple
+                </button>
+                <button id="phoneLoginBtn" class="btn-secondary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                    Phone
+                </button>
+            </div>
         </div>
 
-        <button id="authSubmitBtn" class="btn-primary" style="letter-spacing: 2px;">AUTHENTICATE</button>
-        
-        <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-dim);">
-            <span id="authToggleText">No profile found?</span> 
-            <span id="authToggleBtn" style="color: var(--accent); cursor: pointer; font-weight: 800; border-bottom: 1px solid var(--accent);">REGISTER HERE</span>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <div style="flex-grow: 1; height: 1px; background: var(--border);"></div>
+            <span style="color: var(--text-dim); font-size: 0.8rem;">or use email</span>
+            <div style="flex-grow: 1; height: 1px; background: var(--border);"></div>
         </div>
-        <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.75rem;" onclick="document.getElementById('authModal').classList.remove('active')">CANCEL</button>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+            <input type="email" id="emailInput" placeholder="Email Address" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: inherit;">
+            <input type="password" id="passwordInput" placeholder="Password" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; outline: none; font-family: inherit;">
+        </div>
+
+        <button id="authSubmitBtn" class="btn-primary">Sign In</button>
+        
+        <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-dim);">
+            <span id="authToggleText">Don't have an account?</span> 
+            <span id="authToggleBtn" style="color: var(--accent); cursor: pointer; font-weight: 800;">Sign up here</span>
+        </div>
+        <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.8rem;" onclick="document.getElementById('authModal').classList.remove('active')">Cancel</button>
     </div>
 </div>
 
@@ -951,8 +974,6 @@ window.purchaseTier = function(tierName) {
     document.getElementById('acc-days-progress').style.background = "var(--accent)";
     
     document.querySelector('[data-target=\'account\']').click();
-    
-    // Auto-hide promo if they buy
     document.getElementById('promoPopup').classList.remove('show');
 }
 
@@ -1015,7 +1036,7 @@ function processRuleBasedQuery(cmd) {
 }
 
 /* =========================
-   PROMO NUDGE LOGIC (CENTERED & SIMPLIFIED)
+   PROMO NUDGE LOGIC (CENTERED)
 ========================= */
 const promoMessages = {
     login: [
@@ -1029,7 +1050,6 @@ const promoMessages = {
 };
 
 function triggerPromo() {
-    // Abort if user is premium
     if (window.isUserLoggedIn && window.userCurrentTier !== 'STANDARD TIER') return;
 
     const popup = document.getElementById('promoPopup');
@@ -1050,10 +1070,7 @@ function triggerPromo() {
 
     popup.classList.add('show');
 
-    // Auto hide after 12 seconds so they have time to read it
-    setTimeout(() => {
-        closePromo();
-    }, 12000);
+    setTimeout(() => { closePromo(); }, 12000);
 }
 
 window.closePromo = function() {
@@ -1063,13 +1080,10 @@ window.closePromo = function() {
 
 function scheduleNextPromo() {
     if (window.isUserLoggedIn && window.userCurrentTier !== 'STANDARD TIER') return;
-    
-    // Random interval between 30 and 90 seconds
     const nextTime = Math.floor(Math.random() * (90000 - 30000) + 30000);
     setTimeout(triggerPromo, nextTime);
 }
 
-// Start first promo cycle 5 seconds after load
 setTimeout(() => { triggerPromo(); }, 5000);
 
 setInterval(() => {
@@ -1085,7 +1099,7 @@ addLoginButtonToNav();
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAaDW_kdIz_jvQCiCZcYK4uOdruizUUODU",
@@ -1099,6 +1113,7 @@ addLoginButtonToNav();
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     const authModal = document.getElementById('authModal');
     const authTitle = document.getElementById('authTitle');
@@ -1108,36 +1123,57 @@ addLoginButtonToNav();
     const authToggleText = document.getElementById('authToggleText');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
+    
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const appleLoginBtn = document.getElementById('appleLoginBtn');
+    const phoneLoginBtn = document.getElementById('phoneLoginBtn');
 
     let isLoginMode = true;
 
+    // Toggle between Sign In and Sign Up
     authToggleBtn.addEventListener('click', () => {
         isLoginMode = !isLoginMode;
         if (isLoginMode) {
-            authTitle.innerText = "SYSTEM LOGIN";
-            authSubtitle.innerText = "Enter credentials to access your Vault.";
-            authSubmitBtn.innerText = "AUTHENTICATE";
-            authToggleText.innerText = "No profile found?";
-            authToggleBtn.innerText = "REGISTER HERE";
+            authTitle.innerText = "Welcome Back";
+            authSubtitle.innerText = "Login to access your saved games and settings.";
+            authSubmitBtn.innerText = "Sign In";
+            authToggleText.innerText = "Don't have an account?";
+            authToggleBtn.innerText = "Sign up here";
         } else {
-            authTitle.innerText = "NEW OPERATIVE";
-            authSubtitle.innerText = "Establish a secure profile to save deployments.";
-            authSubmitBtn.innerText = "INITIALIZE PROFILE";
-            authToggleText.innerText = "Already established?";
-            authToggleBtn.innerText = "LOGIN HERE";
+            authTitle.innerText = "Create Account";
+            authSubtitle.innerText = "Sign up to save your deployments.";
+            authSubmitBtn.innerText = "Create Account";
+            authToggleText.innerText = "Already have an account?";
+            authToggleBtn.innerText = "Sign in here";
         }
     });
 
+    // Google Login Logic
+    googleLoginBtn.addEventListener('click', async () => {
+        try {
+            await signInWithPopup(auth, googleProvider);
+            authModal.classList.remove('active');
+        } catch (error) {
+            console.error("Google Auth Error:", error);
+            alert(`Google Sign-In Failed: ${error.message}`);
+        }
+    });
+
+    // Apple & Phone Stubs
+    appleLoginBtn.addEventListener('click', () => alert('Apple Sign-In requires an active Apple Developer account to configure.'));
+    phoneLoginBtn.addEventListener('click', () => alert('Phone Sign-In requires a reCAPTCHA element to be set up on your domain.'));
+
+    // Email/Password Logic
     authSubmitBtn.addEventListener('click', async () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
         
         if(!email || !password) {
-            alert("ERR: Credentials required for uplink.");
+            alert("Please enter both an email and a password.");
             return;
         }
 
-        authSubmitBtn.innerText = "ENCRYPTING...";
+        authSubmitBtn.innerText = "Processing...";
         authSubmitBtn.style.opacity = "0.7";
 
         try {
@@ -1151,10 +1187,10 @@ addLoginButtonToNav();
             passwordInput.value = '';
         } catch (error) {
             console.error("Auth Error:", error);
-            let cleanError = error.code.replace('auth/', '').replace(/-/g, ' ').toUpperCase();
-            alert(`ACCESS DENIED: ${cleanError}`);
+            let cleanError = error.code.replace('auth/', '').replace(/-/g, ' ');
+            alert(`Error: ${cleanError}`);
         } finally {
-            authSubmitBtn.innerText = isLoginMode ? "AUTHENTICATE" : "INITIALIZE PROFILE";
+            authSubmitBtn.innerText = isLoginMode ? "Sign In" : "Create Account";
             authSubmitBtn.style.opacity = "1";
         }
     });
@@ -1186,7 +1222,7 @@ addLoginButtonToNav();
             }
             
             const savedAlias = localStorage.getItem('nexusAlias');
-            const defaultName = user.email.split('@');
+            const defaultName = user.displayName || user.email.split('@');
             const displayAlias = savedAlias ? savedAlias : defaultName;
 
             stationStatuses.forEach(el => {
