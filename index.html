@@ -110,10 +110,26 @@ main { margin-left: 0; padding: 160px 40px 50px 40px; }
 .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
 
 /* =========================
-   STORE CATEGORIES & GRID
+   STORE CATEGORIES, GRID & FILTERS
 ========================= */
 .category-title { font-size: 1.5rem; margin: 40px 0 20px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+
+.filter-bar {
+    display: flex; gap: 10px; margin-top: 20px; margin-bottom: 25px; overflow-x: auto; 
+    padding-bottom: 5px; scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-btn {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text-dim);
+    padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; 
+    font-family: 'JetBrains Mono'; white-space: nowrap; transition: 0.3s; margin: 0; width: auto;
+}
+.filter-btn:hover { border-color: var(--accent); color: white; }
+.filter-btn.active {
+    background: rgba(59, 130, 246, 0.1); border-color: var(--accent); 
+    color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);
+}
 
 .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
 .app-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
@@ -247,9 +263,21 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
     <section id="store" class="view-section">
         <h1 style="font-size: 2.5rem;">Archives</h1>
+        
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-filter="All">All</button>
+            <button class="filter-btn" data-filter="FPS">FPS</button>
+            <button class="filter-btn" data-filter="Open World">Open World</button>
+            <button class="filter-btn" data-filter="Racing">Racing</button>
+            <button class="filter-btn" data-filter="Shooting">Shooting</button>
+            <button class="filter-btn" data-filter="Role Play">Role Play</button>
+            <button class="filter-btn" data-filter="Multiplayer">Multiplayer</button>
+            <button class="filter-btn" data-filter="PC Playable">PC Playable</button>
+        </div>
+
         <div id="storeContainer"></div>
         <div id="noResultsMsg" style="display: none; color: var(--text-dim); margin-top: 30px; text-align: center; font-family: 'JetBrains Mono';">
-            No matching payloads found in the Global Archives.
+            No matching payloads found in the Global Archives for this filter.
         </div>
     </section>
 
@@ -433,17 +461,19 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 /* =========================
    DATA MODEL & STATE
 ========================= */
+// Note: NEW "genres" array added to each object for the auto-sorting system
 const apps = [
-    { id: 0, title: "GTA VICE CITY", desc: "Open world 80s classic. Optimized for HP 348 G7 integrated graphics.", category: "Games", size: 1400, url: "https://quenq.com/apps/vice-city/", img: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=400", playable: true, keywords: ['car', 'driving', 'crime', 'action', 'retro'] },
-    { id: 1, title: "DEADSHOT.IO", desc: "Fast-paced FPS browser shooter. Zero download required.", category: "Games", size: 85, url: "https://deadshot.io", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, keywords: ['gun', 'multiplayer', 'shooter', 'fps'] },
-    { id: 2, title: "Python: Zero to Hero", desc: "Learn to code from scratch. Interactive terminal lessons.", category: "Courses", size: 450, url: null, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400", playable: false, keywords: ['programming', 'development', 'scripting', 'learn'] },
-    { id: 3, title: "Driving Empire Codes", desc: "Automated utility to fetch the latest active Roblox codes.", category: "Utilities", size: 15, url: null, img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400", playable: false, keywords: ['roblox', 'tool', 'hack', 'script'] },
-    { id: 4, title: "MINECRAFT WEB", desc: "Classic block-building survival. Full browser port, no installation needed.", category: "Games", size: 300, url: "https://minecraftweb.pages.dev/", img: "https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=400", playable: true, keywords: ['blocks', 'survival', 'crafting', 'building', 'mc'] },
-    { id: 5, title: "KRUNKER.IO", desc: "Fast-paced pixel FPS. Highly optimized for competitive browser tracking.", category: "Games", size: 65, url: "https://krunker.io", img: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=400", playable: true, keywords: ['fps', 'shooter', 'multiplayer', 'pixel', 'krunker', 'action'] }
+    { id: 0, title: "GTA VICE CITY", desc: "Open world 80s classic. Optimized for HP 348 G7 integrated graphics.", category: "Games", size: 1400, url: "https://quenq.com/apps/vice-city/", img: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=400", playable: true, genres: ['Open World', 'Racing', 'Role Play', 'PC Playable'], keywords: ['car', 'driving', 'crime', 'action', 'retro'] },
+    { id: 1, title: "DEADSHOT.IO", desc: "Fast-paced FPS browser shooter. Zero download required.", category: "Games", size: 85, url: "https://deadshot.io", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['gun', 'multiplayer', 'shooter', 'fps'] },
+    { id: 2, title: "Python: Zero to Hero", desc: "Learn to code from scratch. Interactive terminal lessons.", category: "Courses", size: 450, url: null, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400", playable: false, genres: [], keywords: ['programming', 'development', 'scripting', 'learn'] },
+    { id: 3, title: "Driving Empire Codes", desc: "Automated utility to fetch the latest active Roblox codes.", category: "Utilities", size: 15, url: null, img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400", playable: false, genres: [], keywords: ['roblox', 'tool', 'hack', 'script'] },
+    { id: 4, title: "MINECRAFT WEB", desc: "Classic block-building survival. Full browser port, no installation needed.", category: "Games", size: 300, url: "https://minecraftweb.pages.dev/", img: "https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=400", playable: true, genres: ['Open World', 'Role Play', 'Multiplayer', 'PC Playable'], keywords: ['blocks', 'survival', 'crafting', 'building', 'mc'] },
+    { id: 5, title: "KRUNKER.IO", desc: "Fast-paced pixel FPS. Highly optimized for competitive browser tracking.", category: "Games", size: 65, url: "https://krunker.io", img: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=400", playable: true, genres: ['FPS', 'Shooting', 'Multiplayer', 'PC Playable'], keywords: ['fps', 'shooter', 'multiplayer', 'pixel', 'krunker', 'action'] }
 ];
 
 let vault = [];
 let currentApp = null;
+let activeGenreFilter = 'All'; // Tracking the new active genre filter
 
 const DOM = {
     navLinks: document.getElementById('navLinks'),
@@ -455,7 +485,8 @@ const DOM = {
     deployBtn: document.getElementById('deployBtn'),
     playBtn: document.getElementById('playBtn'),
     searchInput: document.getElementById('searchInput'),
-    noResultsMsg: document.getElementById('noResultsMsg')
+    noResultsMsg: document.getElementById('noResultsMsg'),
+    filterBtns: document.querySelectorAll('.filter-btn')
 };
 
 /* =========================
@@ -492,6 +523,24 @@ function teleportToStore() {
 }
 
 /* =========================
+   FILTER BAR LOGIC
+========================= */
+DOM.filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        DOM.filterBtns.forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        btn.classList.add('active');
+        
+        // Update the active filter variable
+        activeGenreFilter = btn.dataset.filter;
+        
+        // Run the master filter function
+        filterStore();
+    });
+});
+
+/* =========================
    RENDER STORE & OMNI-SEARCH
 ========================= */
 function renderStore() {
@@ -501,7 +550,7 @@ function renderStore() {
         html += `<div class="category-group" id="cat-${category}"><h2 class="category-title">${category}</h2><div class="grid">`;
         apps.filter(app => app.category === category).forEach(app => {
             html += `
-                <div class="app-card" data-id="${app.id}" data-keywords="${app.keywords.join(' ').toUpperCase()}">
+                <div class="app-card" data-id="${app.id}" data-genres="${(app.genres || []).join(',')}" data-keywords="${app.keywords.join(' ').toUpperCase()}">
                     <img src="${app.img}">
                     <div class="price-tag">${app.playable ? "PLAY" : "DOWNLOAD"}</div>
                     <div class="app-info"><h3 class="app-name">${app.title}</h3><p class="app-desc">${app.desc}</p></div>
@@ -518,6 +567,7 @@ function filterStore() {
     let groups = document.querySelectorAll('.category-group');
     let hasVisibleCards = false;
 
+    // Teleport to store if typing in the search bar
     if(input.length > 0 && !document.getElementById('store').classList.contains('active')) {
         teleportToStore();
     }
@@ -526,8 +576,15 @@ function filterStore() {
         let name = card.querySelector('.app-name').innerText.toUpperCase();
         let desc = card.querySelector('.app-desc').innerText.toUpperCase();
         let keywords = card.dataset.keywords; 
+        
+        // Check Search Match
+        let matchesSearch = (name.includes(input) || desc.includes(input) || keywords.includes(input));
+        
+        // Check Category/Genre Match
+        let cardGenres = card.dataset.genres ? card.dataset.genres.split(',') : [];
+        let matchesGenre = (activeGenreFilter === 'All' || cardGenres.includes(activeGenreFilter));
 
-        if(name.includes(input) || desc.includes(input) || keywords.includes(input)) {
+        if(matchesSearch && matchesGenre) {
             card.style.display = "";
             hasVisibleCards = true;
         } else {
@@ -540,7 +597,8 @@ function filterStore() {
         group.style.display = visibleCards.length === 0 ? "none" : "block";
     });
 
-    if (input.length > 0 && !hasVisibleCards) {
+    // Show error message if neither search nor filter yields results
+    if (!hasVisibleCards) {
         DOM.noResultsMsg.style.display = "block";
     } else {
         DOM.noResultsMsg.style.display = "none";
