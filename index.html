@@ -438,7 +438,8 @@ const apps = [
     { id: 1, title: "DEADSHOT.IO", desc: "Fast-paced FPS browser shooter. Zero download required.", category: "Games", size: 85, url: "https://deadshot.io", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400", playable: true, keywords: ['gun', 'multiplayer', 'shooter', 'fps'] },
     { id: 2, title: "Python: Zero to Hero", desc: "Learn to code from scratch. Interactive terminal lessons.", category: "Courses", size: 450, url: null, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=400", playable: false, keywords: ['programming', 'development', 'scripting', 'learn'] },
     { id: 3, title: "Driving Empire Codes", desc: "Automated utility to fetch the latest active Roblox codes.", category: "Utilities", size: 15, url: null, img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400", playable: false, keywords: ['roblox', 'tool', 'hack', 'script'] },
-    { id: 4, title: "MINECRAFT WEB", desc: "Classic block-building survival. Full browser port, no installation needed.", category: "Games", size: 300, url: "https://minecraftweb.pages.dev/", img: "https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=400", playable: true, keywords: ['blocks', 'survival', 'crafting', 'building', 'mc'] }
+    { id: 4, title: "MINECRAFT WEB", desc: "Classic block-building survival. Full browser port, no installation needed.", category: "Games", size: 300, url: "https://minecraftweb.pages.dev/", img: "https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=400", playable: true, keywords: ['blocks', 'survival', 'crafting', 'building', 'mc'] },
+    { id: 5, title: "KRUNKER.IO", desc: "Fast-paced pixel FPS. Highly optimized for competitive browser tracking.", category: "Games", size: 65, url: "https://krunker.io", img: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=400", playable: true, keywords: ['fps', 'shooter', 'multiplayer', 'pixel', 'krunker', 'action'] }
 ];
 
 let vault = [];
@@ -767,7 +768,7 @@ function processRuleBasedQuery(cmd) {
     }
 
     if(cmd.includes('game') || cmd.includes('app') || cmd.includes('archive') || cmd.includes('catalog')) {
-        return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly.";
+        return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Krunker.io</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly.";
     }
 
     if(cmd.includes('hardware') || cmd.includes('requirement') || cmd.includes('hp 348') || cmd.includes('pc') || cmd.includes('laptop')) {
