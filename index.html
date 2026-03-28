@@ -7,13 +7,17 @@
 
 <style>
 /* =========================
-   BASE STYLES
+   BASE STYLES & DYNAMIC THEME
 ========================= */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap');
 
 :root {
-    --accent: #3b82f6;
+    /* These variables shift dynamically via JavaScript based on Subscription Tier */
+    --accent: #3b82f6; 
     --accent-glow: rgba(59, 130, 246, 0.4);
+    --accent-bg: rgba(59, 130, 246, 0.1);
+    --accent-border: rgba(59, 130, 246, 0.2);
+
     --bg: #030303;
     --surface: #0a0a0c;
     --card: #121214;
@@ -37,6 +41,7 @@ body {
         linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 40px 40px;
     background-position: center center;
+    transition: 0.5s ease; /* Smooth transition for theme swaps */
 }
 
 h1, h2, h3 { margin: 0; }
@@ -54,14 +59,14 @@ h1, h2, h3 { margin: 0; }
 }
 
 .logo-container { height: 80px; display: flex; align-items: center; padding: 0 30px; border-bottom: 1px solid var(--border); transition: padding 0.3s ease; }
-.logo { color: var(--accent); font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; white-space: nowrap; }
-.logo-icon { display: none; font-size: 1.8rem; color: var(--accent); }
+.logo { color: var(--accent); font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; white-space: nowrap; transition: color 0.5s ease; }
+.logo-icon { display: none; font-size: 1.8rem; color: var(--accent); transition: color 0.5s ease; }
 
 .nav-links { list-style: none; padding: 20px; display: flex; flex-direction: column; gap: 10px; margin: 0; flex-grow: 1; overflow-y: auto; overflow-x: hidden; }
 .nav-links::-webkit-scrollbar { display: none; }
 .nav-links li { padding: 12px 16px; color: var(--text-dim); font-weight: 600; font-size: 0.9rem; border-radius: 8px; cursor: pointer; transition: 0.3s ease; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
 .nav-links li svg { fill: currentColor; transition: 0.3s; flex-shrink: 0; }
-.nav-links li:hover, .nav-links li.active { background: rgba(59, 130, 246, 0.1); color: white; box-shadow: inset 3px 0 0 var(--accent); }
+.nav-links li:hover, .nav-links li.active { background: var(--accent-bg); color: white; box-shadow: inset 3px 0 0 var(--accent); }
 
 .station-status { padding: 20px 30px; border-top: 1px solid var(--border); font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-dim); line-height: 1.6; white-space: nowrap; transition: opacity 0.3s ease; }
 
@@ -78,7 +83,7 @@ h1, h2, h3 { margin: 0; }
 .sidebar-toggle:hover { color: var(--accent); }
 .search-input { background: var(--surface); border: 1px solid var(--border); padding: 12px 20px; border-radius: 30px; color: white; outline: none; width: 300px; transition: 0.3s; }
 .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-.user-status { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); background: rgba(59, 130, 246, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; gap: 15px; }
+.user-status { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); background: var(--accent-bg); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--accent-border); display: flex; align-items: center; gap: 15px; transition: all 0.5s ease; }
 
 /* =========================
    LAYOUT & SECTIONS
@@ -106,26 +111,26 @@ main { margin-left: var(--sidebar-width); padding: 120px 40px 50px 40px; transit
 /* =========================
    HOME PAGE & STORE
 ========================= */
-.hero { background: linear-gradient(45deg, rgba(59,130,246,0.1), transparent); border: 1px solid rgba(59,130,246,0.2); border-radius: 20px; padding: 50px; margin-bottom: 40px; }
+.hero { background: linear-gradient(45deg, var(--accent-bg), transparent); border: 1px solid var(--accent-border); border-radius: 20px; padding: 50px; margin-bottom: 40px; transition: all 0.5s ease; }
 .hero h1 { font-size: 2.8rem; margin-bottom: 15px; }
 .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
-.category-title { font-size: 1.5rem; margin: 40px 0 20px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.category-title { font-size: 1.5rem; margin: 40px 0 20px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; transition: color 0.5s ease; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
 .filter-bar { display: flex; gap: 10px; margin-top: 20px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-family: 'JetBrains Mono'; white-space: nowrap; transition: 0.3s; margin: 0; width: auto; }
 .filter-btn:hover { border-color: var(--accent); color: white; }
-.filter-btn.active { background: rgba(59, 130, 246, 0.1); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+.filter-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
 .app-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 .app-card img { width: 100%; height: 160px; object-fit: cover; opacity: 0.8; transition: 0.3s; }
 .app-card:hover img { opacity: 1; }
 .app-info { padding: 20px; }
 .app-info p { color: var(--text-dim); font-size: 0.85rem; margin-top: 5px; line-height: 1.4; }
-.price-tag { position: absolute; top: 15px; right: 15px; background: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; }
+.price-tag { position: absolute; top: 15px; right: 15px; background: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; transition: background 0.5s ease; }
 .sub-features { list-style: none; margin: 20px 0; font-size: 0.85rem; color: var(--text-dim); padding: 0;}
 .sub-features li { margin-bottom: 8px; }
-.sub-features li::before { content: "●"; color: var(--accent); font-size: 0.6rem; margin-right: 8px; }
+.sub-features li::before { content: "●"; color: var(--accent); font-size: 0.6rem; margin-right: 8px; transition: color 0.5s ease; }
 .social-link { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); text-decoration: none; transition: 0.3s; }
 .social-link:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-3px); }
 .social-link svg { width: 20px; height: 20px; fill: currentColor; }
@@ -139,21 +144,21 @@ main { margin-left: var(--sidebar-width); padding: 120px 40px 50px 40px; transit
 .modal-box h2 { margin-bottom: 10px; }
 .modal-box p { color: var(--text-dim); margin-bottom: 25px; line-height: 1.5; }
 button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; font-family: inherit; transition: 0.2s; box-sizing: border-box;}
-.btn-primary { background: var(--accent); color: white; width: 100%; margin-bottom: 10px; }
+.btn-primary { background: var(--accent); color: white; width: 100%; margin-bottom: 10px; transition: background 0.5s ease; }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.2); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-secondary { background: #222; color: white; width: 100%; border: 1px solid var(--border); }
 .btn-secondary:hover { background: #333; }
 #downloadBar { position: fixed; bottom: 30px; right: 30px; width: 300px; max-width: 90%; background: #111; padding: 15px; border-radius: 10px; display: none; border: 1px solid var(--border); z-index: 5000; box-sizing: border-box; }
 .progress-bg { background: #222; height: 6px; border-radius: 3px; margin-top: 10px; overflow: hidden; }
-.progress { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
+.progress { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s, background 0.5s ease; }
 
 /* =========================
    CENTERED PROMO POPUP
 ========================= */
 .promo-popup { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 5500; padding: 20px; }
 .promo-popup.show { display: flex; }
-.promo-box { background: #111; padding: 40px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--accent); box-shadow: 0 0 40px var(--accent-glow); text-align: center; position: relative; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.promo-box { background: #111; padding: 40px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--accent); box-shadow: 0 0 40px var(--accent-glow); text-align: center; position: relative; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: border-color 0.5s ease, box-shadow 0.5s ease; }
 @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 .promo-header { font-size: 1.2rem; margin-bottom: 20px; font-family: 'JetBrains Mono'; }
 .promo-body { font-size: 1.1rem; color: var(--text); margin-bottom: 25px; line-height: 1.6; }
@@ -167,10 +172,10 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 .chat-btn:hover { transform: scale(1.1); }
 .chat-window { position: fixed; bottom: 100px; right: 30px; width: 380px; max-width: 90%; height: 500px; max-height: 70vh; background: rgba(10, 10, 12, 0.98); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 3000; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 .chat-window.open { opacity: 1; pointer-events: all; transform: translateY(0); }
-.chat-header { padding: 15px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.8rem; color: var(--accent); display: flex; justify-content: space-between;}
+.chat-header { padding: 15px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.8rem; color: var(--accent); display: flex; justify-content: space-between; transition: color 0.5s ease; }
 .chat-body { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .chat-msg { padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; max-width: 85%; line-height: 1.5; }
-.chat-msg.bot { background: rgba(59, 130, 246, 0.1); align-self: flex-start; border: 1px solid rgba(59, 130, 246, 0.2); color: var(--text); }
+.chat-msg.bot { background: var(--accent-bg); align-self: flex-start; border: 1px solid var(--accent-border); color: var(--text); transition: all 0.5s ease; }
 .chat-msg.user { background: var(--card); align-self: flex-end; border: 1px solid var(--border); color: var(--text-dim); }
 .chat-input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
 .chat-input-area input { flex-grow: 1; background: transparent; border: none; color: white; outline: none; font-family: inherit; }
@@ -241,10 +246,10 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
         </div>
         <div style="display: flex; gap: 20px; flex-wrap: wrap;">
             <div style="background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); flex: 1; min-width: 250px; box-sizing: border-box;">
-                <h3 style="color: var(--accent);">Network Status</h3><p style="color: var(--success); margin-top: 5px; font-family: 'JetBrains Mono';">SECURE_TUNNEL_ACTIVE</p>
+                <h3 style="color: var(--accent); transition: color 0.5s ease;">Network Status</h3><p style="color: var(--success); margin-top: 5px; font-family: 'JetBrains Mono';">SECURE_TUNNEL_ACTIVE</p>
             </div>
             <div style="background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); flex: 1; min-width: 250px; box-sizing: border-box;">
-                <h3 style="color: var(--accent);">Hardware Profile</h3><p style="color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono';">HP 348 G7 | INTEL UHD</p>
+                <h3 style="color: var(--accent); transition: color 0.5s ease;">Hardware Profile</h3><p style="color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono';">HP 348 G7 | INTEL UHD</p>
             </div>
         </div>
     </section>
@@ -273,9 +278,9 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
                     <button class="btn-secondary" style="margin-top: 10px;" onclick="purchaseTier('LITE PROTOCOL')">INITIALIZE</button>
                 </div>
             </div>
-            <div class="app-card" style="border: 1px solid var(--accent); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);">
+            <div class="app-card" style="border: 1px solid var(--accent); box-shadow: 0 10px 30px var(--accent-bg); transition: all 0.5s ease;">
                 <div class="app-info">
-                    <span style="color: var(--accent); font-weight: 800; font-size: 0.7rem;">ELITE PROTOCOL</span><h2 style="font-size: 2.2rem; margin: 10px 0;">₹939<span style="font-size: 0.9rem; font-weight: 300; color: var(--text-dim);">/mo</span></h2>
+                    <span style="color: var(--accent); font-weight: 800; font-size: 0.7rem; transition: color 0.5s ease;">ELITE PROTOCOL</span><h2 style="font-size: 2.2rem; margin: 10px 0;">₹939<span style="font-size: 0.9rem; font-weight: 300; color: var(--text-dim);">/mo</span></h2>
                     <ul class="sub-features"><li>1440p / 120 FPS Access</li><li>AAA Global Archive Access</li><li>High-Priority Queue</li></ul>
                     <button class="btn-primary" style="margin-top: 10px;" onclick="purchaseTier('ELITE PROTOCOL')">INITIALIZE</button>
                 </div>
@@ -293,7 +298,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
         <p style="color: var(--text-dim); margin-bottom: 40px;">Manage your secure connection, alias, and active protocols.</p>
         <div style="display: flex; gap: 30px; flex-wrap: wrap;">
             <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); flex: 1; min-width: 300px; box-sizing: border-box;">
-                <h3 style="color: var(--accent); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);"></span>Operative Identification</h3>
+                <h3 style="color: var(--accent); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; transition: color 0.5s ease;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow); transition: all 0.5s ease;"></span>Operative Identification</h3>
                 <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 0;">OPERATIVE ALIAS</p>
                 <div style="display: flex; gap: 10px; margin: 5px 0 20px 0;">
                     <input type="text" id="acc-name-input" placeholder="Enter Alias..." style="background: var(--surface); border: 1px solid var(--border); padding: 10px 15px; color: white; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 0.85rem; flex-grow: 1; outline: none;">
@@ -303,17 +308,17 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
                 <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">STATION ID</p><p style="font-family: 'JetBrains Mono'; margin: 5px 0 20px 0; color: var(--text);">HP_348_G7 // INTEGRATED</p>
                 <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">NETWORK STATUS</p><p id="acc-status" style="font-family: 'JetBrains Mono'; margin: 5px 0 0 0; color: var(--danger);">UNVERIFIED</p>
             </div>
-            <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.1); flex: 1; min-width: 300px; box-sizing: border-box; display: flex; flex-direction: column;">
+            <div style="background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--accent); box-shadow: 0 0 20px var(--accent-bg); flex: 1; min-width: 300px; box-sizing: border-box; display: flex; flex-direction: column; transition: all 0.5s ease;">
                 <h3 style="color: var(--text); margin-bottom: 20px;">Active Protocol</h3>
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                    <h2 id="acc-tier" style="font-size: 2rem; margin: 0; color: var(--accent);">STANDARD TIER</h2>
-                    <span id="acc-tier-badge" style="background: rgba(59,130,246,0.1); padding: 5px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; color: var(--accent);">FREE</span>
+                    <h2 id="acc-tier" style="font-size: 2rem; margin: 0; color: var(--accent); transition: color 0.5s ease;">STANDARD TIER</h2>
+                    <span id="acc-tier-badge" style="background: var(--accent-bg); padding: 5px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; color: var(--accent); transition: all 0.5s ease;">FREE</span>
                 </div>
                 <div style="background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                     <p style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 0 0 5px 0;">CYCLE REMAINING</p>
-                    <p id="acc-days-left" style="font-family: 'JetBrains Mono'; font-size: 1.2rem; margin: 0; color: var(--text);">∞</p>
+                    <p id="acc-days-left" style="font-family: 'JetBrains Mono'; font-size: 1.2rem; margin: 0; color: var(--text); transition: color 0.5s ease;">∞</p>
                     <div style="background: #222; height: 4px; border-radius: 2px; margin-top: 10px; overflow: hidden;">
-                        <div id="acc-days-progress" style="height: 100%; background: var(--accent); width: 100%; transition: width 0.5s ease;"></div>
+                        <div id="acc-days-progress" style="height: 100%; background: var(--accent); width: 100%; transition: all 0.5s ease;"></div>
                     </div>
                 </div>
                 <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">Your current plan dictates your cloud execution limits. Upgrade your protocol to maximize output.</p>
@@ -328,8 +333,8 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
         <div style="display: flex; gap: 30px; flex-wrap: wrap;">
             <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; flex: 1; min-width: 300px; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
-                    <div style="width: 70px; height: 70px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">👨‍💻</div>
-                    <div><h2 style="margin: 0; color: var(--text); font-size: 1.5rem;">NAVYUG NIRALA</h2><p style="margin: 5px 0 0 0; color: var(--accent); font-family: 'JetBrains Mono'; font-size: 0.8rem; font-weight: 800;">LEAD ARCHITECT // CREATOR & OWNER</p></div>
+                    <div style="width: 70px; height: 70px; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; transition: all 0.5s ease;">👨‍💻</div>
+                    <div><h2 style="margin: 0; color: var(--text); font-size: 1.5rem;">NAVYUG NIRALA</h2><p style="margin: 5px 0 0 0; color: var(--accent); font-family: 'JetBrains Mono'; font-size: 0.8rem; font-weight: 800; transition: color 0.5s ease;">LEAD ARCHITECT // CREATOR & OWNER</p></div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 18px;">
                     <div><span style="color: var(--text-dim); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">Headquarters Address</span><p style="margin: 5px 0 0 0; font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--text); line-height: 1.5;">Sneh Vihar<br>Gurugram, Haryana, 122102<br>INDIA_REGION</p></div>
@@ -346,8 +351,8 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
             </div>
             <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; flex: 2; min-width: 300px; display: flex; flex-direction: column; gap: 30px; box-sizing: border-box;">
                 <div>
-                    <h3 style="color: var(--text); font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);"></span>Primary Aim</h3>
-                    <div style="background: var(--surface); padding: 20px; border-radius: 10px; border-left: 3px solid var(--accent);"><p style="color: var(--text-dim); line-height: 1.7; margin: 0; font-size: 0.95rem;">To engineer a frictionless, decentralized platform that bridges the gap between hardware constraints and high-fidelity computing. By leveraging optimized payload deployment, the Forge aims to democratize access to seamless web environments and digital archives, ensuring performance stability across all systems.</p></div>
+                    <h3 style="color: var(--text); font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow); transition: all 0.5s ease;"></span>Primary Aim</h3>
+                    <div style="background: var(--surface); padding: 20px; border-radius: 10px; border-left: 3px solid var(--accent); transition: border-color 0.5s ease;"><p style="color: var(--text-dim); line-height: 1.7; margin: 0; font-size: 0.95rem;">To engineer a frictionless, decentralized platform that bridges the gap between hardware constraints and high-fidelity computing. By leveraging optimized payload deployment, the Forge aims to democratize access to seamless web environments and digital archives, ensuring performance stability across all systems.</p></div>
                 </div>
                 <div>
                     <h3 style="color: var(--text); font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><span style="display: inline-block; width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);"></span>Core Intention</h3>
@@ -370,7 +375,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
 <div id="promoPopup" class="promo-popup">
     <div class="promo-box">
-        <div class="promo-header"><span style="color: var(--accent); font-weight: 800; letter-spacing: 1px;">🚀 QUICK TIP</span></div>
+        <div class="promo-header"><span style="color: var(--accent); font-weight: 800; letter-spacing: 1px; transition: color 0.5s ease;">🚀 QUICK TIP</span></div>
         <div class="promo-body" id="promoBody"></div>
         <button class="btn-primary" style="font-size: 1rem; padding: 15px; margin-bottom: 5px;" id="promoActionBtn">UPGRADE NOW</button>
         <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 10px;" onclick="closePromo()">Maybe Later</button>
@@ -389,7 +394,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
 <div class="modal" id="authModal">
     <div class="modal-box" style="text-align: center;">
-        <div style="width: 60px; height: 60px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 20px auto;">👋</div>
+        <div style="width: 60px; height: 60px; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 20px auto; transition: all 0.5s ease;">👋</div>
         <h2 id="authTitle" style="color: white; font-family: 'Plus Jakarta Sans'; margin-bottom: 5px;">Welcome Back</h2>
         <p id="authSubtitle" style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px;">Login to access your saved games and settings.</p>
         
@@ -421,7 +426,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
             <button id="authSubmitBtn" class="btn-primary">Sign In</button>
             <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-dim);">
-                <span id="authToggleText">Don't have an account?</span> <span id="authToggleBtn" style="color: var(--accent); cursor: pointer; font-weight: 800;">Sign up here</span>
+                <span id="authToggleText">Don't have an account?</span> <span id="authToggleBtn" style="color: var(--accent); cursor: pointer; font-weight: 800; transition: color 0.5s ease;">Sign up here</span>
             </div>
         </div>
 
@@ -436,7 +441,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
                 <input type="text" id="otpInput" placeholder="Enter 6-digit code" style="background: var(--surface); border: 1px solid var(--border); padding: 12px 15px; color: white; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 15px; outline: none; font-family: 'JetBrains Mono'; letter-spacing: 3px; text-align: center; font-size: 1.2rem;">
                 <button id="verifyCodeBtn" class="btn-primary" style="background: var(--success); color: black;">Verify Code</button>
             </div>
-            <button id="backToMainAuthBtn" class="btn-secondary" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; font-size: 0.8rem;">← Back to Email Login</button>
+            <button id="backToMainAuthBtn" class="btn-secondary" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; font-size: 0.8rem; transition: color 0.5s ease;">← Back to Email Login</button>
         </div>
 
         <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.8rem;" onclick="window.closeAuthModal()">Cancel</button>
@@ -445,7 +450,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 
 <div id="game-player" class="game-player-overlay">
     <div style="padding: 15px 30px; background: #111; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-        <span style="color: var(--accent); font-family: 'JetBrains Mono'; font-weight: 800;">> SIMULATION ACTIVE</span>
+        <span style="color: var(--accent); font-family: 'JetBrains Mono'; font-weight: 800; transition: color 0.5s ease;">> SIMULATION ACTIVE</span>
         <button onclick="exitGame()" style="background: var(--danger); border: none; color: white; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 800;">EXIT</button>
     </div>
     <iframe id="game-frame" style="flex-grow: 1; border: none;" src=""></iframe>
@@ -461,13 +466,41 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
     <div class="chat-body" id="chatBody"><div class="chat-msg bot">Protocol online. I am your automated assistant. How can I help you navigate the Forge today? Type 'help' for options.</div></div>
     <div class="chat-input-area">
         <input type="text" id="chatInput" placeholder="Enter command or question..." onkeypress="if(event.key==='Enter') sendMessage()" autocomplete="off">
-        <button onclick="sendMessage()" style="background: var(--accent); border: none; padding: 0 15px; border-radius: 8px; color: white; cursor: pointer;">></button>
+        <button onclick="sendMessage()" style="background: var(--accent); border: none; padding: 0 15px; border-radius: 8px; color: white; cursor: pointer; transition: background 0.5s ease;">></button>
     </div>
 </div>
 <div class="chat-btn" onclick="toggleChat()"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
 
 <script>
-// Make variables global so the Firebase script can interact with them
+// ==========================================
+// DYNAMIC THEMING LOGIC
+// ==========================================
+window.applyTheme = function(tier) {
+    const root = document.documentElement;
+    if (tier === 'OMNI PROTOCOL') {
+        root.style.setProperty('--accent', '#fbbf24'); // Gold
+        root.style.setProperty('--accent-glow', 'rgba(251, 191, 36, 0.4)');
+        root.style.setProperty('--accent-bg', 'rgba(251, 191, 36, 0.1)');
+        root.style.setProperty('--accent-border', 'rgba(251, 191, 36, 0.2)');
+    } else if (tier === 'ELITE PROTOCOL') {
+        root.style.setProperty('--accent', '#10b981'); // Emerald Green
+        root.style.setProperty('--accent-glow', 'rgba(16, 185, 129, 0.4)');
+        root.style.setProperty('--accent-bg', 'rgba(16, 185, 129, 0.1)');
+        root.style.setProperty('--accent-border', 'rgba(16, 185, 129, 0.2)');
+    } else if (tier === 'LITE PROTOCOL') {
+        root.style.setProperty('--accent', '#ec4899'); // Neon Pink
+        root.style.setProperty('--accent-glow', 'rgba(236, 72, 153, 0.4)');
+        root.style.setProperty('--accent-bg', 'rgba(236, 72, 153, 0.1)');
+        root.style.setProperty('--accent-border', 'rgba(236, 72, 153, 0.2)');
+    } else {
+        root.style.setProperty('--accent', '#3b82f6'); // Nexus Blue (Standard)
+        root.style.setProperty('--accent-glow', 'rgba(59, 130, 246, 0.4)');
+        root.style.setProperty('--accent-bg', 'rgba(59, 130, 246, 0.1)');
+        root.style.setProperty('--accent-border', 'rgba(59, 130, 246, 0.2)');
+    }
+}
+
+// Global Vars
 window.isUserLoggedIn = false;
 window.userCurrentTier = localStorage.getItem('nexusSub') || 'STANDARD TIER';
 window.vault = JSON.parse(localStorage.getItem('nexusVault')) || [];
@@ -564,14 +597,28 @@ window.saveAlias = function() {
 
 window.purchaseTier = function(tierName) { 
     alert(`Uplink established. Successfully upgraded to ${tierName}.`); 
-    window.userCurrentTier = tierName; localStorage.setItem('nexusSub', tierName); 
+    
+    window.userCurrentTier = tierName; 
+    localStorage.setItem('nexusSub', tierName); 
     const subDate = Date.now().toString();
     localStorage.setItem('nexusSubDate', subDate); 
     
-    document.getElementById('acc-tier').innerText = tierName; document.getElementById('acc-tier-badge').innerText = "PREMIUM"; document.getElementById('acc-tier-badge').style.color = "var(--success)"; 
-    document.getElementById('acc-days-left').innerText = "30 DAYS"; document.getElementById('acc-days-left').style.color = "var(--text)"; document.getElementById('acc-days-progress').style.width = "100%"; document.getElementById('acc-days-progress').style.background = "var(--accent)"; 
+    // Apply Dynamic Theme
+    window.applyTheme(tierName);
+    
+    // Update Profile UI
+    document.getElementById('acc-tier').innerText = tierName; 
+    document.getElementById('acc-tier-badge').innerText = "PREMIUM"; 
+    document.getElementById('acc-tier-badge').style.color = "var(--success)"; 
+    document.getElementById('acc-tier-badge').style.background = "var(--accent-bg)"; 
+    
+    document.getElementById('acc-days-left').innerText = "30 DAYS"; 
+    document.getElementById('acc-days-left').style.color = "var(--text)"; 
+    document.getElementById('acc-days-progress').style.width = "100%"; 
+    document.getElementById('acc-days-progress').style.background = "var(--accent)"; 
     
     document.querySelector('[data-target=\'account\']').click(); document.getElementById('promoPopup').classList.remove('show'); 
+    
     if(window.syncToCloud) window.syncToCloud({subTier: tierName, subDate: subDate});
 }
 
@@ -581,7 +628,26 @@ function addLoginButtonToNav() { const topbarUserArea = document.getElementById(
 function toggleChat() { document.getElementById('chatWindow').classList.toggle('open'); if(document.getElementById('chatWindow').classList.contains('open')) document.getElementById('chatInput').focus(); }
 function sendMessage() { const input = document.getElementById('chatInput'); const body = document.getElementById('chatBody'); const text = input.value.trim(); if(!text) return; body.innerHTML += `<div class="chat-msg user">${text}</div>`; input.value = ""; body.scrollTop = body.scrollHeight; const botResponse = processRuleBasedQuery(text.toLowerCase()); simulateTypingAndRespond(botResponse); }
 function simulateTypingAndRespond(responseHTML) { const body = document.getElementById('chatBody'); const typingId = 'typing-' + Date.now(); body.innerHTML += `<div class="chat-msg bot" id="${typingId}"><span class="blink">_</span> Processing...</div>`; body.scrollTop = body.scrollHeight; setTimeout(() => { const typingEl = document.getElementById(typingId); if(typingEl) typingEl.remove(); body.innerHTML += `<div class="chat-msg bot">${responseHTML}</div>`; body.scrollTop = body.scrollHeight; }, 500); }
-function processRuleBasedQuery(cmd) { if(cmd === '/help' || cmd === 'help') return "NEXUS FORGE SUPPORT DIRECTIVES:<br><br><b>Commands:</b><br><span style='color:var(--accent)'>/status</span> : Hardware check<br><span style='color:var(--accent)'>/clear</span> : Purge memory<br><span style='color:var(--accent)'>theme [color]</span> : Change UI accent<br><br><b>Support Queries:</b> Ask me about <i>pricing</i>, <i>games</i>, <i>hardware</i>, or how to <i>deploy</i> apps."; if(cmd === '/clear') { setTimeout(() => { document.getElementById('chatBody').innerHTML = '<div class="chat-msg bot">Logs purged. Awaiting next command.</div>'; }, 600); return "Executing memory wipe..."; } if(cmd === '/status' || cmd === 'status') { const load = document.getElementById('station-load').innerText.split('|').trim(); return `STATION DIAGNOSTICS:<br>Hardware: HP 348 G7<br>CPU ${load}<br>Network: SECURE_TUNNEL_ACTIVE<br>Location: INDIA_REGION`; } if(cmd.startsWith('theme ')) { let color = cmd.split('theme ').trim(); document.documentElement.style.setProperty('--accent', color); document.documentElement.style.setProperty('--accent-glow', `color-mix(in srgb, ${color} 40%, transparent)`); return `Success: System accent color overridden to <span style="color:${color}">${color}</span>.`; } if(cmd.includes('price') || cmd.includes('cost') || cmd.includes('tier') || cmd.includes('subscription') || cmd.includes('pay')) return "We offer two Cloud Access Tiers to bypass local hardware limits:<br><br>• <b>LITE PROTOCOL (₹499/mo)</b>: 1080p/60FPS.<br>• <b>ELITE PROTOCOL (₹939/mo)</b>: 1440p/120FPS.<br><br>Click the 'Cloud Access' tab above to initialize a tier."; if(cmd.includes('game') || cmd.includes('app') || cmd.includes('archive') || cmd.includes('catalog')) return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Krunker.io</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly."; if(cmd.includes('hardware') || cmd.includes('requirement') || cmd.includes('hp 348') || cmd.includes('pc') || cmd.includes('laptop')) return "NEXUS FORGE is designed to run on any setup. It runs perfectly on your HP 348 G7 by utilizing encrypted high-speed streaming, removing the need for a high-end GPU."; if(cmd.includes('contact') || cmd.includes('support') || cmd.includes('help me') || cmd.includes('email') || cmd.includes('issue')) return "Need human assistance? Navigate to the 'Comms' tab to send a secure transmission, or email the lead architect at <b>technavyug2009@gmail.com</b>."; if(cmd.includes('deploy') || cmd.includes('install') || cmd.includes('play') || cmd.includes('how to')) return "To deploy an app:<br>1. Go to the 'Global Archives'.<br>2. Click on the app card.<br>3. Select 'Add to Vault' or 'Launch in Browser' to play immediately."; if(cmd === 'hi' || cmd === 'hello' || cmd === 'hey' || cmd === 'greetings') return "Greetings. I am the NEXUS FORGE automated support bot. Ask me about pricing, games, hardware requirements, or type 'help'."; return "Command unrecognized. As a secure rule-based construct, I can only respond to queries about the Forge (e.g., 'pricing', 'games', 'hardware', 'support'). Type 'help' for options."; }
+function processRuleBasedQuery(cmd) { 
+    if(cmd === '/help' || cmd === 'help') return "NEXUS FORGE SUPPORT DIRECTIVES:<br><br><b>Commands:</b><br><span style='color:var(--accent)'>/status</span> : Hardware check<br><span style='color:var(--accent)'>/clear</span> : Purge memory<br><span style='color:var(--accent)'>theme [color]</span> : Change UI accent<br><br><b>Support Queries:</b> Ask me about <i>pricing</i>, <i>games</i>, <i>hardware</i>, or how to <i>deploy</i> apps."; 
+    if(cmd === '/clear') { setTimeout(() => { document.getElementById('chatBody').innerHTML = '<div class="chat-msg bot">Logs purged. Awaiting next command.</div>'; }, 600); return "Executing memory wipe..."; } 
+    if(cmd === '/status' || cmd === 'status') { const load = document.getElementById('station-load').innerText.split('|').trim(); return `STATION DIAGNOSTICS:<br>Hardware: HP 348 G7<br>CPU ${load}<br>Network: SECURE_TUNNEL_ACTIVE<br>Location: INDIA_REGION`; } 
+    if(cmd.startsWith('theme ')) { 
+        let color = cmd.split('theme ').trim(); 
+        document.documentElement.style.setProperty('--accent', color); 
+        document.documentElement.style.setProperty('--accent-glow', `color-mix(in srgb, ${color} 40%, transparent)`); 
+        document.documentElement.style.setProperty('--accent-bg', `color-mix(in srgb, ${color} 10%, transparent)`); 
+        document.documentElement.style.setProperty('--accent-border', `color-mix(in srgb, ${color} 20%, transparent)`); 
+        return `Success: System accent color overridden to <span style="color:${color}">${color}</span>.`; 
+    } 
+    if(cmd.includes('price') || cmd.includes('cost') || cmd.includes('tier') || cmd.includes('subscription') || cmd.includes('pay')) return "We offer two Cloud Access Tiers to bypass local hardware limits:<br><br>• <b>LITE PROTOCOL (₹499/mo)</b>: 1080p/60FPS.<br>• <b>ELITE PROTOCOL (₹939/mo)</b>: 1440p/120FPS.<br><br>Click the 'Cloud Access' tab above to initialize a tier."; 
+    if(cmd.includes('game') || cmd.includes('app') || cmd.includes('archive') || cmd.includes('catalog')) return "The Global Archives currently feature: <b>GTA Vice City</b>, <b>Minecraft Web</b>, <b>Krunker.io</b>, <b>Deadshot.io</b>, <b>Python Courses</b>, and <b>Driving Empire tools</b>. Use the search bar at the top of your screen to find specific payloads instantly."; 
+    if(cmd.includes('hardware') || cmd.includes('requirement') || cmd.includes('hp 348') || cmd.includes('pc') || cmd.includes('laptop')) return "NEXUS FORGE is designed to run on any setup. It runs perfectly on your HP 348 G7 by utilizing encrypted high-speed streaming, removing the need for a high-end GPU."; 
+    if(cmd.includes('contact') || cmd.includes('support') || cmd.includes('help me') || cmd.includes('email') || cmd.includes('issue')) return "Need human assistance? Navigate to the 'Comms' tab to send a secure transmission, or email the lead architect at <b>technavyug2009@gmail.com</b>."; 
+    if(cmd.includes('deploy') || cmd.includes('install') || cmd.includes('play') || cmd.includes('how to')) return "To deploy an app:<br>1. Go to the 'Global Archives'.<br>2. Click on the app card.<br>3. Select 'Add to Vault' or 'Launch in Browser' to play immediately."; 
+    if(cmd === 'hi' || cmd === 'hello' || cmd === 'hey' || cmd === 'greetings') return "Greetings. I am the NEXUS FORGE automated support bot. Ask me about pricing, games, hardware requirements, or type 'help'."; 
+    return "Command unrecognized. As a secure rule-based construct, I can only respond to queries about the Forge (e.g., 'pricing', 'games', 'hardware', 'support'). Type 'help' for options."; 
+}
 
 // Promo Logic
 const promoMsgs = { login: ["You are not logged in! Create a free account to save your games and progress.", "Don't lose your deployed apps! Log in now to keep everything safe in your Vault."], upgrade: ["Want better graphics and no lag? Upgrade your plan to play bigger games smoothly!", "Tired of waiting? Get the Premium plan to skip the line and unlock all AAA games."] };
@@ -592,7 +658,9 @@ setTimeout(() => { triggerPromo(); }, 5000);
 
 setInterval(() => { const load = Math.floor(Math.random() * (22 - 8) + 8); document.getElementById('station-load').innerText = `LOAD: ${load}% | OPTIMAL`; }, 4000);
 
-window.renderVault(); addLoginButtonToNav();
+window.applyTheme(window.userCurrentTier); // Apply theme on initial load
+window.renderVault(); 
+addLoginButtonToNav();
 
 window.closeAuthModal = function() {
     document.getElementById('authModal').classList.remove('active');
@@ -606,7 +674,6 @@ window.closeAuthModal = function() {
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-    // IMPORT FIRESTORE DB
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -621,7 +688,7 @@ window.closeAuthModal = function() {
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // INITIALIZE DATABASE
+    const db = getFirestore(app); 
     
     auth.useDeviceLanguage(); 
     const googleProvider = new GoogleAuthProvider();
@@ -731,7 +798,7 @@ window.closeAuthModal = function() {
     });
 
     // ==========================================
-    // OBSERVER & CLOUD DATA FETCHING
+    // OBSERVER & DYNAMIC THEME INJECTION
     // ==========================================
     onAuthStateChanged(auth, async (user) => {
         const loginBtn = document.getElementById('topLoginBtn');
@@ -769,14 +836,14 @@ window.closeAuthModal = function() {
             try {
                 const docSnap = await getDoc(userRef);
                 if (docSnap.exists()) {
-                    // Profile Exists: Download data and overwrite local storage
+                    // Profile Exists: Download data
                     const data = docSnap.data();
                     if (data.vault) { window.vault = data.vault; localStorage.setItem('nexusVault', JSON.stringify(window.vault)); window.renderVault(); }
                     if (data.alias) localStorage.setItem('nexusAlias', data.alias);
                     if (data.subTier) localStorage.setItem('nexusSub', data.subTier);
                     if (data.subDate) localStorage.setItem('nexusSubDate', data.subDate);
                 } else {
-                    // New User: Upload whatever they have in local storage to the cloud
+                    // New User: Upload standard profile
                     await setDoc(userRef, {
                         vault: window.vault || [],
                         alias: localStorage.getItem('nexusAlias') || defaultName,
@@ -786,7 +853,7 @@ window.closeAuthModal = function() {
                 }
             } catch(e) { console.error("Error fetching user data:", e); }
             
-            // Re-read from local storage after sync
+            // Re-read local storage to populate UI
             const displayAlias = localStorage.getItem('nexusAlias') || defaultName;
             let currentSub = localStorage.getItem('nexusSub') || 'STANDARD TIER';
             let subDate = localStorage.getItem('nexusSubDate');
@@ -803,9 +870,7 @@ window.closeAuthModal = function() {
             // GOD MODE OVERRIDE
             if (isOwner) {
                 window.userCurrentTier = 'OMNI PROTOCOL'; 
-                
-                document.documentElement.style.setProperty('--accent', '#fbbf24');
-                document.documentElement.style.setProperty('--accent-glow', 'rgba(251, 191, 36, 0.4)');
+                window.applyTheme('OMNI PROTOCOL');
                 
                 stationStatuses.forEach(el => {
                     el.innerHTML = `STATION: HP_348_G7<br>ARCHITECT: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: #fbbf24;">SYSTEM_OVERRIDE</span>`;
@@ -825,8 +890,7 @@ window.closeAuthModal = function() {
             } 
             // NORMAL OPERATIVE LOGIC
             else {
-                document.documentElement.style.setProperty('--accent', '#3b82f6');
-                document.documentElement.style.setProperty('--accent-glow', 'rgba(59, 130, 246, 0.4)');
+                window.applyTheme(currentSub);
 
                 stationStatuses.forEach(el => {
                     el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
@@ -837,6 +901,7 @@ window.closeAuthModal = function() {
                 if(currentSub !== 'STANDARD TIER' && subDate) {
                     accTierBadge.innerText = "PREMIUM";
                     accTierBadge.style.color = "var(--success)";
+                    accTierBadge.style.background = "var(--accent-bg)"; 
                     
                     const daysPassed = Math.floor((Date.now() - parseInt(subDate)) / (1000 * 60 * 60 * 24));
                     const daysRemaining = Math.max(0, 30 - daysPassed);
@@ -855,6 +920,7 @@ window.closeAuthModal = function() {
                 } else {
                     accTierBadge.innerText = "FREE";
                     accTierBadge.style.color = "var(--accent)";
+                    accTierBadge.style.background = "var(--accent-bg)"; 
                     accDaysLeft.innerText = "∞";
                     accDaysProgress.style.width = "100%";
                     accDaysLeft.style.color = "var(--text)";
@@ -875,8 +941,8 @@ window.closeAuthModal = function() {
             localStorage.removeItem('nexusSubDate');
             window.renderVault();
 
-            document.documentElement.style.setProperty('--accent', '#3b82f6');
-            document.documentElement.style.setProperty('--accent-glow', 'rgba(59, 130, 246, 0.4)');
+            // Revert theme to default Blue
+            window.applyTheme('STANDARD TIER');
 
             if(loginBtn) {
                 loginBtn.innerText = "LOGIN";
@@ -896,6 +962,7 @@ window.closeAuthModal = function() {
             accTier.innerText = "STANDARD TIER";
             accTierBadge.innerText = "FREE";
             accTierBadge.style.color = "var(--accent)";
+            accTierBadge.style.background = "var(--accent-bg)"; 
             accDaysLeft.innerText = "∞";
             accDaysProgress.style.width = "100%";
             accDaysProgress.style.background = "var(--accent)";
