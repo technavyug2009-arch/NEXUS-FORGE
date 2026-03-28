@@ -439,7 +439,7 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
             <button id="backToMainAuthBtn" class="btn-secondary" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; font-size: 0.8rem;">← Back to Email Login</button>
         </div>
 
-        <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.8rem;" onclick="closeAuthModal()">Cancel</button>
+        <button class="btn-secondary" style="background: transparent; border: none; color: var(--text-dim); margin-top: 15px; font-size: 0.8rem;" onclick="window.closeAuthModal()">Cancel</button>
     </div>
 </div>
 
@@ -467,8 +467,10 @@ button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer;
 <div class="chat-btn" onclick="toggleChat()"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
 
 <script>
+// Make variables global so the Firebase script can interact with them
 window.isUserLoggedIn = false;
 window.userCurrentTier = localStorage.getItem('nexusSub') || 'STANDARD TIER';
+window.vault = JSON.parse(localStorage.getItem('nexusVault')) || [];
 let promoCount = parseInt(localStorage.getItem('nexusPromoCount')) || 0;
 const MAX_PROMOS = 4;
 
@@ -484,7 +486,6 @@ const apps = [
     { id: 16, title: "GRAND THEFT AUTO V", desc: "The ultimate AAA open-world experience.", category: "Games", size: 105000, url: "https://now.gg/play/rockstar-games/gta-v", img: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=400", playable: true, genres: ['Open World', 'Shooting', 'Role Play', 'Racing', 'Multiplayer'], keywords: ['gta', 'gta 5', 'gta v', 'los santos', 'aaa', 'crime', 'heist'] }
 ];
 
-let vault = JSON.parse(localStorage.getItem('nexusVault')) || [];
 let currentApp = null;
 let activeGenreFilter = 'All'; 
 
@@ -520,15 +521,60 @@ DOM.searchInput.addEventListener('input', filterStore);
 
 // Deploy
 DOM.storeContainer.addEventListener('click', e => { const card = e.target.closest('.app-card'); if (!card) return; currentApp = apps.find(a => a.id === parseInt(card.dataset.id)); DOM.mTitle.textContent = currentApp.title; DOM.mDesc.textContent = currentApp.desc; DOM.playBtn.style.display = currentApp.playable ? 'block' : 'none'; DOM.modal.classList.add('active'); });
-function closeModal() { DOM.modal.classList.remove('active'); }
-DOM.playBtn.onclick = () => { closeModal(); document.getElementById('game-frame').src = currentApp.url; document.getElementById('game-player').classList.add('active'); };
+window.closeModal = function() { DOM.modal.classList.remove('active'); }
+DOM.playBtn.onclick = () => { window.closeModal(); document.getElementById('game-frame').src = currentApp.url; document.getElementById('game-player').classList.add('active'); };
 window.exitGame = function() { document.getElementById('game-player').classList.remove('active'); document.getElementById('game-frame').src = ""; }
-DOM.deployBtn.onclick = () => { closeModal(); const bar = document.getElementById('downloadBar'); const text = document.getElementById('dlText'); const prog = document.getElementById('progress'); bar.style.display = 'block'; text.textContent = `Adding ${currentApp.title} to Vault...`; let progress = 0; const interval = setInterval(() => { progress += Math.random() * 15; if (progress >= 100) { progress = 100; clearInterval(interval); text.textContent = "Successfully Added"; addToVault(currentApp); setTimeout(() => { bar.style.display = 'none'; prog.style.width = "0%"; }, 2000); } prog.style.width = progress + "%"; }, 200); };
-function renderVault() { const container = document.getElementById('vault-grid'); if (vault.length === 0) { container.innerHTML = `<p style="color: var(--text-dim); grid-column: 1/-1;">No local deployments detected. Archives empty.</p>`; return; } container.innerHTML = vault.map(item => `<div class="app-card"><img src="${item.img}" style="height: 120px; width: 100%; object-fit: cover;"><div class="price-tag" style="background: var(--success); color: #000;">ACTIVE</div><div class="app-info"><h3>${item.title}</h3><p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">Installed on HP Station.</p></div></div>`).join(''); }
-function addToVault(app) { if(!vault.find(v => v.id === app.id)) { vault.push(app); localStorage.setItem('nexusVault', JSON.stringify(vault)); renderVault(); } }
 
-window.saveAlias = function() { const input = document.getElementById('acc-name-input').value.trim(); if(input) { localStorage.setItem('nexusAlias', input); alert(`Alias successfully updated to: ${input}`); document.querySelectorAll('.station-status').forEach(el => { el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${input.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`; }); } }
-window.purchaseTier = function(tierName) { alert(`Uplink established. Successfully upgraded to ${tierName}.`); window.userCurrentTier = tierName; localStorage.setItem('nexusSub', tierName); localStorage.setItem('nexusSubDate', Date.now().toString()); document.getElementById('acc-tier').innerText = tierName; document.getElementById('acc-tier-badge').innerText = "PREMIUM"; document.getElementById('acc-tier-badge').style.color = "var(--success)"; document.getElementById('acc-days-left').innerText = "30 DAYS"; document.getElementById('acc-days-left').style.color = "var(--text)"; document.getElementById('acc-days-progress').style.width = "100%"; document.getElementById('acc-days-progress').style.background = "var(--accent)"; document.querySelector('[data-target=\'account\']').click(); document.getElementById('promoPopup').classList.remove('show'); }
+// Updates local and syncs to cloud
+DOM.deployBtn.onclick = () => { 
+    window.closeModal(); const bar = document.getElementById('downloadBar'); const text = document.getElementById('dlText'); const prog = document.getElementById('progress'); bar.style.display = 'block'; text.textContent = `Adding ${currentApp.title} to Vault...`; let progress = 0; 
+    const interval = setInterval(() => { 
+        progress += Math.random() * 15; 
+        if (progress >= 100) { 
+            progress = 100; clearInterval(interval); text.textContent = "Successfully Added"; 
+            addToVault(currentApp); setTimeout(() => { bar.style.display = 'none'; prog.style.width = "0%"; }, 2000); 
+        } 
+        prog.style.width = progress + "%"; 
+    }, 200); 
+};
+
+window.renderVault = function() { 
+    const container = document.getElementById('vault-grid'); 
+    if (window.vault.length === 0) { container.innerHTML = `<p style="color: var(--text-dim); grid-column: 1/-1;">No local deployments detected. Archives empty.</p>`; return; } 
+    container.innerHTML = window.vault.map(item => `<div class="app-card"><img src="${item.img}" style="height: 120px; width: 100%; object-fit: cover;"><div class="price-tag" style="background: var(--success); color: #000;">ACTIVE</div><div class="app-info"><h3>${item.title}</h3><p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">Installed on HP Station.</p></div></div>`).join(''); 
+}
+
+function addToVault(app) { 
+    if(!window.vault.find(v => v.id === app.id)) { 
+        window.vault.push(app); 
+        localStorage.setItem('nexusVault', JSON.stringify(window.vault)); 
+        window.renderVault(); 
+        if(window.syncToCloud) window.syncToCloud({vault: window.vault});
+    } 
+}
+
+window.saveAlias = function() { 
+    const input = document.getElementById('acc-name-input').value.trim(); 
+    if(input) { 
+        localStorage.setItem('nexusAlias', input); alert(`Alias successfully updated to: ${input}`); 
+        document.querySelectorAll('.station-status').forEach(el => { el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${input.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`; }); 
+        if(window.syncToCloud) window.syncToCloud({alias: input});
+    } 
+}
+
+window.purchaseTier = function(tierName) { 
+    alert(`Uplink established. Successfully upgraded to ${tierName}.`); 
+    window.userCurrentTier = tierName; localStorage.setItem('nexusSub', tierName); 
+    const subDate = Date.now().toString();
+    localStorage.setItem('nexusSubDate', subDate); 
+    
+    document.getElementById('acc-tier').innerText = tierName; document.getElementById('acc-tier-badge').innerText = "PREMIUM"; document.getElementById('acc-tier-badge').style.color = "var(--success)"; 
+    document.getElementById('acc-days-left').innerText = "30 DAYS"; document.getElementById('acc-days-left').style.color = "var(--text)"; document.getElementById('acc-days-progress').style.width = "100%"; document.getElementById('acc-days-progress').style.background = "var(--accent)"; 
+    
+    document.querySelector('[data-target=\'account\']').click(); document.getElementById('promoPopup').classList.remove('show'); 
+    if(window.syncToCloud) window.syncToCloud({subTier: tierName, subDate: subDate});
+}
+
 function addLoginButtonToNav() { const topbarUserArea = document.getElementById('topbarUserArea'); const loginBtn = document.createElement('button'); loginBtn.className = "btn-secondary"; loginBtn.style.width = "auto"; loginBtn.style.padding = "6px 20px"; loginBtn.style.border = "1px solid var(--accent)"; loginBtn.style.color = "var(--accent)"; loginBtn.innerText = "LOGIN"; loginBtn.id = "topLoginBtn"; loginBtn.onclick = () => document.getElementById('authModal').classList.add('active'); topbarUserArea.appendChild(loginBtn); }
 
 // Chatbot
@@ -546,7 +592,7 @@ setTimeout(() => { triggerPromo(); }, 5000);
 
 setInterval(() => { const load = Math.floor(Math.random() * (22 - 8) + 8); document.getElementById('station-load').innerText = `LOAD: ${load}% | OPTIMAL`; }, 4000);
 
-renderStore(); renderVault(); addLoginButtonToNav();
+window.renderVault(); addLoginButtonToNav();
 
 window.closeAuthModal = function() {
     document.getElementById('authModal').classList.remove('active');
@@ -560,6 +606,8 @@ window.closeAuthModal = function() {
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    // IMPORT FIRESTORE DB
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAaDW_kdIz_jvQCiCZcYK4uOdruizUUODU",
@@ -573,6 +621,8 @@ window.closeAuthModal = function() {
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app); // INITIALIZE DATABASE
+    
     auth.useDeviceLanguage(); 
     const googleProvider = new GoogleAuthProvider();
 
@@ -596,6 +646,17 @@ window.closeAuthModal = function() {
     const otpInput = document.getElementById('otpInput');
 
     let isLoginMode = true;
+
+    // --- SYNC FUNCTION TO UPDATE CLOUD ---
+    window.syncToCloud = async function(dataObject) {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                await setDoc(userRef, dataObject, { merge: true });
+            } catch(e) { console.error("Cloud Sync Error: ", e); }
+        }
+    };
 
     authToggleBtn.addEventListener('click', () => {
         isLoginMode = !isLoginMode;
@@ -670,9 +731,9 @@ window.closeAuthModal = function() {
     });
 
     // ==========================================
-    // OBSERVER WITH GOD MODE THEMING
+    // OBSERVER & CLOUD DATA FETCHING
     // ==========================================
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         const loginBtn = document.getElementById('topLoginBtn');
         const stationStatuses = document.querySelectorAll('.station-status');
         const navAccount = document.getElementById('nav-account');
@@ -684,12 +745,12 @@ window.closeAuthModal = function() {
         const accDaysLeft = document.getElementById('acc-days-left');
         const accDaysProgress = document.getElementById('acc-days-progress');
 
-        // THE MASTER KEY (Your Email)
-        const OWNER_EMAIL = "technavyug2009@gmail.com"; 
+        const ADMIN_EMAILS = [
+            "technavyug2009@gmail.com"
+        ]; 
 
         if (user) {
             window.isUserLoggedIn = true;
-            const isOwner = (user.email === OWNER_EMAIL); 
             
             if(loginBtn) {
                 loginBtn.innerText = "LOGOUT";
@@ -700,10 +761,36 @@ window.closeAuthModal = function() {
                     document.querySelector('[data-target=\'home\']').click();
                 };
             }
-            
-            const savedAlias = localStorage.getItem('nexusAlias');
+
+            // --- FETCH DATA FROM CLOUD FIRESTORE ---
+            const userRef = doc(db, 'users', user.uid);
             const defaultName = user.displayName || (user.email ? user.email.split('@') : "OPERATIVE");
-            const displayAlias = savedAlias ? savedAlias : defaultName;
+            
+            try {
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    // Profile Exists: Download data and overwrite local storage
+                    const data = docSnap.data();
+                    if (data.vault) { window.vault = data.vault; localStorage.setItem('nexusVault', JSON.stringify(window.vault)); window.renderVault(); }
+                    if (data.alias) localStorage.setItem('nexusAlias', data.alias);
+                    if (data.subTier) localStorage.setItem('nexusSub', data.subTier);
+                    if (data.subDate) localStorage.setItem('nexusSubDate', data.subDate);
+                } else {
+                    // New User: Upload whatever they have in local storage to the cloud
+                    await setDoc(userRef, {
+                        vault: window.vault || [],
+                        alias: localStorage.getItem('nexusAlias') || defaultName,
+                        subTier: localStorage.getItem('nexusSub') || 'STANDARD TIER',
+                        subDate: localStorage.getItem('nexusSubDate') || ''
+                    });
+                }
+            } catch(e) { console.error("Error fetching user data:", e); }
+            
+            // Re-read from local storage after sync
+            const displayAlias = localStorage.getItem('nexusAlias') || defaultName;
+            let currentSub = localStorage.getItem('nexusSub') || 'STANDARD TIER';
+            let subDate = localStorage.getItem('nexusSubDate');
+            window.userCurrentTier = currentSub; 
             
             navAccount.style.display = "flex";
             accEmail.innerText = user.email || user.phoneNumber || "N/A";
@@ -711,11 +798,12 @@ window.closeAuthModal = function() {
             accStatus.style.color = "var(--success)";
             nameInput.value = displayAlias;
 
+            const isOwner = ADMIN_EMAILS.includes(user.email); 
+
             // GOD MODE OVERRIDE
             if (isOwner) {
                 window.userCurrentTier = 'OMNI PROTOCOL'; 
                 
-                // 1. INJECT GOLDEN THEME VARIABLES
                 document.documentElement.style.setProperty('--accent', '#fbbf24');
                 document.documentElement.style.setProperty('--accent-glow', 'rgba(251, 191, 36, 0.4)');
                 
@@ -734,11 +822,9 @@ window.closeAuthModal = function() {
                 accDaysProgress.style.background = "#fbbf24";
 
                 document.getElementById('promoPopup').classList.remove('show');
-
             } 
             // NORMAL OPERATIVE LOGIC
             else {
-                // 2. ENSURE STANDARD BLUE THEME
                 document.documentElement.style.setProperty('--accent', '#3b82f6');
                 document.documentElement.style.setProperty('--accent-glow', 'rgba(59, 130, 246, 0.4)');
 
@@ -746,10 +832,6 @@ window.closeAuthModal = function() {
                     el.innerHTML = `STATION: HP_348_G7<br>OPERATIVE: ${displayAlias.toUpperCase()}<br>STATUS: <span style="color: var(--success);">SECURE</span>`;
                 });
 
-                let currentSub = localStorage.getItem('nexusSub') || 'STANDARD TIER';
-                window.userCurrentTier = currentSub; 
-                let subDate = localStorage.getItem('nexusSubDate');
-                
                 accTier.innerText = currentSub;
                 
                 if(currentSub !== 'STANDARD TIER' && subDate) {
@@ -785,7 +867,14 @@ window.closeAuthModal = function() {
             window.isUserLoggedIn = false;
             window.userCurrentTier = 'STANDARD TIER';
 
-            // 3. ENSURE STANDARD BLUE THEME
+            // Wipe local screen clean so the next person doesn't see your vault
+            window.vault = [];
+            localStorage.removeItem('nexusVault');
+            localStorage.removeItem('nexusAlias');
+            localStorage.removeItem('nexusSub');
+            localStorage.removeItem('nexusSubDate');
+            window.renderVault();
+
             document.documentElement.style.setProperty('--accent', '#3b82f6');
             document.documentElement.style.setProperty('--accent-glow', 'rgba(59, 130, 246, 0.4)');
 
